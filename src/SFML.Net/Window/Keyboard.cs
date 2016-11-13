@@ -239,7 +239,7 @@ namespace SFML.Window
         }
 
         #region Imports
-        [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("csfml-window", CallingConvention = CallingConvention.Cdecl)]
         static extern bool sfKeyboard_isKeyPressed(Key Key);
         #endregion
     }

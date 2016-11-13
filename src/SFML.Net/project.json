@@ -1,0 +1,32 @@
+﻿{
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "NETStandard.Library": "1.6.0"
+  },
+
+  "configurations": {
+    "Release": {
+      "buildOptions": {
+        "define": [ "RELEASE", "TRACE" ],
+        "allowUnsafe": true,
+        "platform": "x64",
+        "optimize": false
+      }
+    },
+    "Debug": {
+      "buildOptions": {
+        "define": [ "DEBUG", "TRACE" ],
+        "allowUnsafe": true,
+        "platform": "x64",
+        "optimize": true
+      }
+    }
+  },
+
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50"
+    }
+  }
+}

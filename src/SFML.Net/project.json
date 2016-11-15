@@ -5,23 +5,8 @@
     "NETStandard.Library": "1.6.0"
   },
 
-  "configurations": {
-    "Release": {
-      "buildOptions": {
-        "define": [ "RELEASE", "TRACE" ],
-        "allowUnsafe": true,
-        "platform": "x64",
-        "optimize": false
-      }
-    },
-    "Debug": {
-      "buildOptions": {
-        "define": [ "DEBUG", "TRACE" ],
-        "allowUnsafe": true,
-        "platform": "x64",
-        "optimize": true
-      }
-    }
+  "buildOptions": {
+    "allowUnsafe": true
   },
 
   "frameworks": {

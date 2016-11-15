@@ -1,6 +1,5 @@
-﻿using System;
-using SFML.Graphics;
-using SFML.Window;
+﻿using Collective_learning.Simulation.Factory;
+using Collective_learning.Simulation.Interfaces;
 
 namespace Collective_learning
 {
@@ -8,24 +7,15 @@ namespace Collective_learning
     {
         public static void Main(string[] args)
         {
-            var window = new RenderWindow(new VideoMode(1280u, 768u), "SFML Example");
-
-            window.Closed += (s, e) => window.Close();
-            window.SetVisible(true);
-            window.SetVerticalSyncEnabled(true);
-            window.SetFramerateLimit(60);
-            window.SetActive();
-
-
-            CircleShape cs = new CircleShape(100.0f);
-            cs.FillColor = Color.Green;
+            ISimulation simulation = SimulationFactory.CreateDefault();
+            var window = SimulationWindow.Create(simulation);
 
             while (window.IsOpen)
             {
-                // Dispatch events to work with native event loop
                 window.DispatchEvents();
+                window.Update();
                 window.Clear();
-                window.Draw(cs);
+                window.Draw();
                 window.Display();
             }
         }

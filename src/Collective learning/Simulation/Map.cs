@@ -145,7 +145,7 @@ namespace Collective_learning.Simulation
 
     internal enum FieldType
     {
-        Empty,
+        Empty = 0,
         Food,
         Water,
         Danger,

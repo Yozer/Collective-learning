@@ -9,7 +9,7 @@ namespace Collective_learning
     public sealed class SimulationWindow : RenderWindow
     {
         private readonly ISimulation _simulation;
-        private readonly View _view;
+        private readonly View _simulationView;
 
         private const string WindowTitle = "Collective Learning 0.1";
         private const uint WindowWidth = 1280u;
@@ -38,7 +38,8 @@ namespace Collective_learning
             SetActive();
             CreateEventHandlers();
 
-            _view = new View(new FloatRect(0, 0, WindowWidth, WindowHeight));
+            _simulationView = new View(new FloatRect(0, 0, WindowWidth, WindowHeight));
+            _simulationView.Move(new Vector2f(-(WindowWidth - simulation.Width) / 2, - (WindowHeight - simulation.Height) / 2));
         }
 
         private void CreateEventHandlers()
@@ -50,7 +51,7 @@ namespace Collective_learning
 
         private void OnResized(object sender, SizeEventArgs sizeEventArgs)
         {
-            _view.Size = new Vector2f(sizeEventArgs.Width, sizeEventArgs.Height);
+            _simulationView.Size = new Vector2f(sizeEventArgs.Width, sizeEventArgs.Height);
         }
 
         private void OnKeyPressed(object sender, KeyEventArgs args)
@@ -66,7 +67,7 @@ namespace Collective_learning
                 if (_lastDragPoint != default(Vector2i))
                 {
                     var offset = _lastDragPoint - Mouse.GetPosition();
-                    _view.Move(new Vector2f(offset.X, offset.Y));
+                    _simulationView.Move(new Vector2f(offset.X, offset.Y));
                 }
                 _lastDragPoint = Mouse.GetPosition();
             }
@@ -75,14 +76,14 @@ namespace Collective_learning
                 _lastDragPoint = default(Vector2i);
             }
         }
-        internal void Update()
+        internal void Update(float delta)
         {
             HandleDragging();
-            _simulation.Update();
+            _simulation.Update(delta);
         }
         internal void Draw()
         {
-            SetView(_view);
+            SetView(_simulationView);
             Draw(_simulation);
         }
     }

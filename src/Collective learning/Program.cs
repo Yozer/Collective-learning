@@ -1,5 +1,6 @@
 ﻿using Collective_learning.Simulation.Factory;
 using Collective_learning.Simulation.Interfaces;
+using SFML.System;
 
 namespace Collective_learning
 {
@@ -10,10 +11,11 @@ namespace Collective_learning
             ISimulation simulation = SimulationFactory.CreateDefault();
             var window = SimulationWindow.Create(simulation);
 
+            Clock clock = new Clock();
             while (window.IsOpen)
             {
                 window.DispatchEvents();
-                window.Update();
+                window.Update(clock.Restart().AsSeconds());
                 window.Clear();
                 window.Draw();
                 window.Display();

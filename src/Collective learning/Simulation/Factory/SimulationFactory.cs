@@ -9,8 +9,8 @@ namespace Collective_learning.Simulation.Factory
         public static ISimulation CreateDefault()
         {
             // read settings
-            var map = Map.Load(Path.Combine("Assets", "map.txt"));
-            return new Simulation(map);
+            var map = new Map(Path.Combine("Assets", "map.txt"));
+            return new Simulation(map, new SimulationOptions());
         }
     }
 }

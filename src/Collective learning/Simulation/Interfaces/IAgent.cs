@@ -8,5 +8,6 @@ namespace Collective_learning.Simulation.Interfaces
     {
         void Update(float delta);
         Queue<MapField> Path { get; set; }
+
     }
 }

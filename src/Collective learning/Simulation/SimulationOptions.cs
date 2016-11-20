@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using SFML.Graphics;
 
 namespace Collective_learning.Simulation
@@ -9,18 +10,32 @@ namespace Collective_learning.Simulation
 
         public const float Eps = 10e-2f;
 
-        public const float AgentSpeed = 500;
-        public const float AgentRadius = 12;
+        public const float AgentSpeed = 250;
+        public const float AgentRadius = 9;
 
-        public const float FieldWidth = 48;
-        public const float FieldHeight = 48;
+        public const float FieldWidth = 38;
+        public const float FieldHeight = 38;
 
         public static readonly Color AgentColor = new Color(99, 60, 5); // brown
-        public static readonly Color EmptyColor = new Color(110, 104, 109); // grey
-        public static readonly Color DangerColor = new Color(249, 39, 39); // red
-        public static readonly Color FoodColor = new Color(252, 122, 35); // orange
-        public static readonly Color StartColor = new Color(16, 183, 19); // green
-        public static readonly Color WaterColor = new Color(37, 226, 247); // blue
 
+        public static readonly Dictionary<char, FieldType> FieldTypes = new Dictionary<char, FieldType>
+        {
+            ['E'] = FieldType.Empty,
+            ['F'] = FieldType.Food,
+            ['W'] = FieldType.Water,
+            ['D'] = FieldType.Danger,
+            ['S'] = FieldType.Start,
+            ['B'] = FieldType.Blocked
+        };
+
+        public static readonly Dictionary<FieldType, Color> FieldColors = new Dictionary<FieldType, Color>
+        {
+            [FieldType.Blocked] = new Color(110, 104, 109), // grey
+            [FieldType.Danger] = new Color(249, 39, 39), // red
+            [FieldType.Food] = new Color(252, 122, 35), // orange
+            [FieldType.Start] = new Color(16, 183, 19), // green
+            [FieldType.Water] = new Color(37, 226, 247), // blue
+            [FieldType.Empty] = Color.White
+        };
     }
 }

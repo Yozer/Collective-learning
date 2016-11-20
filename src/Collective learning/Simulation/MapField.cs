@@ -17,21 +17,7 @@ namespace Collective_learning.Simulation
             internal set
             {
                 _type = value;
-                Color color;
-                if (_type == FieldType.Empty)
-                    color = SimulationOptions.EmptyColor; // gray
-                else if (_type == FieldType.Danger)
-                    color = SimulationOptions.DangerColor; // red
-                else if (_type == FieldType.Food)
-                    color = SimulationOptions.FoodColor; // orange
-                else if (_type == FieldType.Start)
-                    color = SimulationOptions.StartColor; // green
-                else if (_type == FieldType.Water)
-                    color = SimulationOptions.WaterColor; // blue
-                else
-                    throw new ArgumentOutOfRangeException(nameof(Type));
-
-                _rectangle.FillColor = color;
+                _rectangle.FillColor = SimulationOptions.FieldColors[_type];
             }
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SFML.Graphics;
@@ -29,12 +30,11 @@ namespace Collective_learning.Simulation
                     line = reader.ReadLine();
                     for (int x = 0; x < Width; ++x)
                     {
-                        int type = line[x] - '0';
                         Fields[x, y] = new MapField
                         {
                             X = x,
                             Y = y,
-                            Type = (FieldType) type
+                            Type = SimulationOptions.FieldTypes[line[x]]
                         };
 
                         if (Fields[x, y].Type == FieldType.Start)
@@ -76,6 +76,7 @@ namespace Collective_learning.Simulation
         Food,
         Water,
         Danger,
-        Start
+        Start,
+        Blocked
     }
 }

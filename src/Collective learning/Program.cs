@@ -1,5 +1,6 @@
 ﻿using Collective_learning.Simulation.Factory;
 using Collective_learning.Simulation.Interfaces;
+using SFML.Graphics;
 using SFML.System;
 
 namespace Collective_learning
@@ -16,7 +17,7 @@ namespace Collective_learning
             {
                 window.DispatchEvents();
                 window.Update(clock.Restart().AsSeconds());
-                window.Clear();
+                window.Clear(Color.White);
                 window.Draw();
                 window.Display();
             }

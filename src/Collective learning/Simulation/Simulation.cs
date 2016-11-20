@@ -25,47 +25,17 @@ namespace Collective_learning.Simulation
             //for (int i = 0; i < _options.AgentsCount; ++i)
             //{
                 IAgent agent = new Agent(_map.StartField);
-                for (int x = 0; x < 100; ++x)
-                {
-                    agent.Path.Enqueue(_map.Fields[11, 1]);
-                    agent.Path.Enqueue(_map.Fields[11, 2]);
-                    agent.Path.Enqueue(_map.Fields[10, 2]);
-                    agent.Path.Enqueue(_map.Fields[10, 3]);
-                    agent.Path.Enqueue(_map.Fields[9, 3]);
-                    agent.Path.Enqueue(_map.Fields[8, 3]);
-                    agent.Path.Enqueue(_map.Fields[7, 3]);
-                    agent.Path.Enqueue(_map.Fields[6, 3]);
-                    agent.Path.Enqueue(_map.Fields[6, 4]);
-                    agent.Path.Enqueue(_map.Fields[6, 5]);
-                    agent.Path.Enqueue(_map.Fields[6, 6]);
-                    agent.Path.Enqueue(_map.Fields[7, 6]);
-                    agent.Path.Enqueue(_map.Fields[8, 6]);
-                    agent.Path.Enqueue(_map.Fields[9, 6]);
-                    agent.Path.Enqueue(_map.Fields[10, 6]);
-                    agent.Path.Enqueue(_map.Fields[11, 6]);
-                    agent.Path.Enqueue(_map.Fields[11, 5]);
-                    agent.Path.Enqueue(_map.Fields[11, 4]);
-                    agent.Path.Enqueue(_map.Fields[11, 3]);
-                    agent.Path.Enqueue(_map.Fields[11, 2]);
-                    agent.Path.Enqueue(_map.Fields[11, 1]);
-                    agent.Path.Enqueue(_map.Fields[11, 0]);
-                }
-
-            _agents.Add(agent);
-            agent = new Agent(_map.StartField);
             for (int x = 0; x < 100; ++x)
             {
-                for (int y = 10; y >= 0; --y)
-                    agent.Path.Enqueue(_map.Fields[y, 0]);
-                for (int y = 1; y <= 11; ++y)
-                    agent.Path.Enqueue(_map.Fields[y, 0]);
-                for (int y = 1; y <= 10; ++y)
-                    agent.Path.Enqueue(_map.Fields[11, y]);
-                for (int y = 9; y >= 0; --y)
-                    agent.Path.Enqueue(_map.Fields[11, y]);
-
-                agent.Path.Enqueue(_map.Fields[11, 1]);
-                agent.Path.Enqueue(_map.Fields[11, 2]);
+                agent.Path.Enqueue(_map.Fields[10, 1]);
+                    agent.Path.Enqueue(_map.Fields[9, 2]);
+            agent.Path.Enqueue(_map.Fields[8, 3]);
+            agent.Path.Enqueue(_map.Fields[7, 3]);
+            agent.Path.Enqueue(_map.Fields[8, 3]);
+            agent.Path.Enqueue(_map.Fields[9, 2]);
+            agent.Path.Enqueue(_map.Fields[10, 1]);
+            agent.Path.Enqueue(_map.Fields[11, 0]);
+            agent.Path.Enqueue(_map.Fields[10, 1]);
                 agent.Path.Enqueue(_map.Fields[10, 2]);
                 agent.Path.Enqueue(_map.Fields[10, 3]);
                 agent.Path.Enqueue(_map.Fields[9, 3]);
@@ -88,20 +58,6 @@ namespace Collective_learning.Simulation
                 agent.Path.Enqueue(_map.Fields[11, 0]);
             }
 
-            _agents.Add(agent);
-
-            agent = new Agent(_map.StartField);
-            for (int x = 0; x < 100; ++x)
-            {
-                for (int y = 10; y >= 0; --y)
-                    agent.Path.Enqueue(_map.Fields[y, 0]);
-                for (int y = 1; y <= 11; ++y)
-                    agent.Path.Enqueue(_map.Fields[y, 0]);
-                for (int y = 1; y <= 10; ++y)
-                    agent.Path.Enqueue(_map.Fields[11, y]);
-                for (int y = 9; y >= 0; --y)
-                    agent.Path.Enqueue(_map.Fields[11, y]);
-            }
             _agents.Add(agent);
             //}
         }

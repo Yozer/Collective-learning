@@ -62,7 +62,7 @@ namespace Collective_learning
 
         private void HandleDragging()
         {
-            if (Mouse.IsButtonPressed(Mouse.Button.Left))
+            if (Mouse.IsButtonPressed(Mouse.Button.Left) && ((_lastDragPoint == default(Vector2i) && HasFocus()) || _lastDragPoint != default(Vector2i)))
             {
                 if (_lastDragPoint != default(Vector2i))
                 {

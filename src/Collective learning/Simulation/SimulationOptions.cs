@@ -6,11 +6,11 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 15;
-        public const float ExplorationThreshold = 0.2f;
+        public int AgentsCount { get; } = 1;
+        public const float ExplorationThreshold = 0.9f;
 
 
-        public const float AgentSpeed = 250;
+        public const float AgentSpeed = 800;
         public const float AgentRadius = 9;
         public static readonly Color AgentColor = new Color(99, 60, 5); // brown
 

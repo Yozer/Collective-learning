@@ -51,6 +51,10 @@ namespace Collective_learning.Simulation
                 agent.Update(delta);
                 if (agent.TargetField != null)
                     agent.TargetField.SpecialColor = Color.Yellow;
+                foreach (var knownField in agent.Knowledge.KnownFields)
+                {
+                    _map.Fields[knownField.X, knownField.Y].Darker = true;
+                }
             }
         }
 

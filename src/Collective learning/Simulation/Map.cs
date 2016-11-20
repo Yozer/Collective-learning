@@ -124,7 +124,19 @@ namespace Collective_learning.Simulation
                 }
             }
 
-            throw new Exception();
+            float closest = float.MaxValue;
+            end = null;
+            foreach (var entry in f_score)
+            {
+                // try to find closest unknown field to end
+                if (!knowledge.KnownFields.Contains(entry.Key) && entry.Value < closest)
+                {
+                    end = entry.Key;
+                    closest = entry.Value;
+                }
+            }
+
+            return end == null ? null : ReconstructPath(came_from, end);
         }
 
         private Queue<MapField> ReconstructPath(Dictionary<MapField, MapField> cameFrom, MapField end)
@@ -163,34 +175,14 @@ namespace Collective_learning.Simulation
             var result = list
                 .Where(t => t.X >= 0 && t.X < Width && t.Y >= 0 && t.Y < Height)
                 .Select(t => Fields[t.X, t.Y]);
-            return result.ToList();
+
             if (!knowledge.KnownFields.Contains(field))
-                result = result.Where(t => knowledge.KnownFields.Contains(t)); // from unkown we can only go to known
+                result = result.Where(t => knowledge.KnownFields.Contains(t) && !knowledge.Negative.Contains(t) && !knowledge.Blocked.Contains(t)); // from unknown we can only go to known
             else
-                result = result.Where(t => !knowledge.KnownFields.Contains(t) || (knowledge.KnownFields.Contains(t) && t.Type != FieldType.Blocked && t.Type != FieldType.Danger));
+                result = result.Where(t => !knowledge.KnownFields.Contains(t) || (knowledge.KnownFields.Contains(t) && !knowledge.Negative.Contains(t) && !knowledge.Blocked.Contains(t))); // from known we can go anywhere but not negative
 
             return result.ToList();
         }
-
-        //private class HeapData : IComparable<HeapData>
-        //{
-        //    public HeapData(int cost, MapField field)
-        //    {
-        //        FScore = cost;
-        //        Field = field;
-        //    }
-
-        //    public int FScore { get; set; }
-        //    public MapField Field { get; }
-
-        //    public int CompareTo(HeapData other)
-        //    {
-        //        if (this == other)
-        //            throw new Exception();
-
-        //        return FScore.CompareTo(other.FScore);
-        //    }
-        //}
     }
 
     public enum FieldType

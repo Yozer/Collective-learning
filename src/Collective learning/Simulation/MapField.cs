@@ -10,6 +10,7 @@ namespace Collective_learning.Simulation
         private FieldType _type;
 
         private readonly RectangleShape _rectangle;
+        private bool _darker;
 
         public FieldType Type
         {
@@ -44,7 +45,18 @@ namespace Collective_learning.Simulation
 
         public Color SpecialColor
         {
-            set { _rectangle.FillColor = value == default(Color) ? SimulationOptions.FieldColors[_type] : value; }
+            set { _rectangle.FillColor = value == default(Color) ? SimulationOptions.FieldColors[_type] : value; _darker = false; }
+        }
+
+        public bool Darker
+        {
+            get { return _darker; }
+            set
+            {
+                if(value && !_darker)
+                    _rectangle.FillColor = new Color((byte) (_rectangle.FillColor.R * 0.69), (byte) (_rectangle.FillColor.G *0.69), (byte) (_rectangle.FillColor.B*0.69));
+                _darker = value;
+            }
         }
 
         public MapField()

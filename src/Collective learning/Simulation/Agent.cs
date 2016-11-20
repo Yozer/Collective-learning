@@ -59,29 +59,28 @@ namespace Collective_learning.Simulation
 
         public void Update(float delta)
         {
-            ChooseTarget();
+            if (TargetField == null)
+            {
+                ChooseTarget();
+                InvalidatePathToTarget();
+            }
             Move(delta);
         }
 
         private void ChooseTarget()
         {
-            if (TargetField == null)
+            // if we don't know any positive fields or we want to explore
+            MapField fieldToExplore;
+            if ((Knowledge.Positive.All(t => t == CurrentField) || SimulationOptions.Random.NextDouble() <= SimulationOptions.ExplorationThreshold)
+                && (fieldToExplore = ChooseUnknownField()) != null)
             {
-                // if we don't know any positive fields or we want to explore
-                MapField fieldToExplore;
-                if ((Knowledge.Positive.All(t => t == CurrentField) || SimulationOptions.Random.NextDouble() <= SimulationOptions.ExplorationThreshold)
-                    && (fieldToExplore = ChooseUnknownField()) != null)
-                {
-                    TargetField = fieldToExplore;
-                }
-                else
-                {
-                    // just visit something positive
-                    var otherPositiveFields = Knowledge.Positive.Where(t => t != CurrentField).ToList();
-                    TargetField = otherPositiveFields[SimulationOptions.Random.Next(0, otherPositiveFields.Count)];
-                }
-
-                InvalidatePathToTarget();
+                TargetField = fieldToExplore;
+            }
+            else
+            {
+                // just visit something positive
+                var otherPositiveFields = Knowledge.Positive.Where(t => t != CurrentField).ToList();
+                TargetField = otherPositiveFields[SimulationOptions.Random.Next(0, otherPositiveFields.Count)];
             }
         }
 
@@ -96,12 +95,32 @@ namespace Collective_learning.Simulation
             if (NextField == null)
             {
                 if(Path.Count > 0)
-                    NextField = Path.Dequeue(); // ok I know where
+                    NextField = Path.Dequeue(); // ok I know where to move next
                 else if (TargetField != CurrentField) // hmm, I didn't reach my target and I don't know where should I move next, InvalidatePath
                 {
                     InvalidatePathToTarget();
                     if (Path.Count > 0)
                         NextField = Path.Dequeue(); // now I know where to go
+                }
+
+                // after choosing next field correctly
+                if (NextField != null)
+                {
+                    // update knowledge
+                    UpdateKnowledge(NextField);
+                    // check if we can move there
+                    if (NextField.Type == FieldType.Blocked)
+                    {
+                        // if that was our target, choose new one
+                        if (TargetField == NextField)
+                        {
+                            ChooseTarget();
+                        }
+
+                        InvalidatePathToTarget();
+                        NextField = null;
+                        return;
+                    }
                 }
             }
 
@@ -115,7 +134,6 @@ namespace Collective_learning.Simulation
                     _circleShape.Position = NextField.Center;
                     CurrentField = NextField;
                     NextField = null;
-                    UpdateKnowledge(CurrentField);
                     if (CurrentField == TargetField)
                         TargetField = null;
                 }

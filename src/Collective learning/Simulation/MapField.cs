@@ -4,7 +4,7 @@ using SFML.System;
 
 namespace Collective_learning.Simulation
 {
-    internal class MapField : Drawable, IDisposable
+    public class MapField : Drawable, IDisposable, IEquatable<MapField>
     {
         private int _x, _y;
         private FieldType _type;
@@ -42,6 +42,11 @@ namespace Collective_learning.Simulation
 
         public Vector2f Center => _rectangle.Position;
 
+        public Color SpecialColor
+        {
+            set { _rectangle.FillColor = value == default(Color) ? SimulationOptions.FieldColors[_type] : value; }
+        }
+
         public MapField()
         {
             _rectangle = new RectangleShape(new Vector2f(SimulationOptions.FieldWidth, SimulationOptions.FieldHeight));
@@ -58,6 +63,41 @@ namespace Collective_learning.Simulation
         public void Dispose()
         {
             _rectangle.Dispose();
+        }
+
+        public bool Equals(MapField other)
+        {
+            return X == other.X && Y == other.Y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is MapField))
+                return false;
+            return Equals((MapField)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            hash = ((hash + X) << 5) - (hash + X);
+            hash = ((hash + Y) << 5) - (hash + Y);
+            return hash;
+        }
+
+        public static bool operator ==(MapField a, MapField b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (((object)a == null) || ((object)b == null))
+                return false;
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(MapField a, MapField b)
+        {
+            return !(a == b);
         }
     }
 }

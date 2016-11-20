@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SFML.Graphics;
 
@@ -5,18 +6,16 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 1;
+        public int AgentsCount { get; } = 15;
+        public const float ExplorationThreshold = 0.2f;
 
-
-        public const float Eps = 10e-2f;
 
         public const float AgentSpeed = 250;
         public const float AgentRadius = 9;
+        public static readonly Color AgentColor = new Color(99, 60, 5); // brown
 
         public const float FieldWidth = 38;
         public const float FieldHeight = 38;
-
-        public static readonly Color AgentColor = new Color(99, 60, 5); // brown
 
         public static readonly Dictionary<char, FieldType> FieldTypes = new Dictionary<char, FieldType>
         {
@@ -37,5 +36,7 @@ namespace Collective_learning.Simulation
             [FieldType.Water] = new Color(37, 226, 247), // blue
             [FieldType.Empty] = Color.White
         };
+
+        public static Random Random { get; } = new Random();
     }
 }

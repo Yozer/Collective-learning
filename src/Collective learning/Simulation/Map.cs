@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
+using SFML.System;
 
 namespace Collective_learning.Simulation
 {
@@ -11,7 +14,6 @@ namespace Collective_learning.Simulation
         public int Width { get; }
         public int Height { get; }
         public MapField StartField { get; }
-
         public MapField[,] Fields { get; set; }
 
         public Map(StreamReader reader, bool dispose = false)
@@ -67,10 +69,131 @@ namespace Collective_learning.Simulation
                mapField.Dispose();
             }
         }
-        
+
+        public Queue<MapField> FindPath(MapField start, MapField end, IKnowledge knowledge)
+        {
+            var closedset = new HashSet<MapField>();
+            var openset = new HashSet<MapField>();
+            var g_score = new Dictionary<MapField, float>();
+            var h_score = new Dictionary<MapField, float>();
+            var f_score = new Dictionary<MapField, float>();
+            var came_from = new Dictionary<MapField, MapField>();
+
+            openset.Add(start);
+            g_score.Add(start, 0);
+
+            while (openset.Count > 0)
+            {
+                MapField x = openset.First();
+                foreach (MapField field in openset)
+                {
+                    if (f_score.ContainsKey(field) && f_score[field] < f_score[x])
+                        x = field;
+                }
+
+                if (x == end)
+                {
+                    return ReconstructPath(came_from, end);
+                }
+
+                openset.Remove(x);
+                closedset.Add(x);
+
+                foreach (var y in GetNeighbors(x, knowledge))
+                {
+                    if (closedset.Contains(y)) continue;
+
+                    float tentative_g_score = g_score[x] + Distance(x, y);
+                    bool tentative_is_better = false;
+
+                    if (!openset.Contains(y))
+                    {
+                        openset.Add(y);
+                        h_score[y] = Distance(y, end);
+                        tentative_is_better = true;
+                    }
+                    else if (tentative_g_score < g_score[y])
+                        tentative_is_better = true;
+
+                    if (tentative_is_better)
+                    {
+                        came_from[y] = x;
+                        g_score[y] = tentative_g_score;
+                        f_score[y] = g_score[y] + h_score[y];
+                    }
+                }
+            }
+
+            throw new Exception();
+        }
+
+        private Queue<MapField> ReconstructPath(Dictionary<MapField, MapField> cameFrom, MapField end)
+        {
+            var result = new List<MapField>();
+            result.Add(end);
+            while (cameFrom.ContainsKey(end))
+            {
+                end = cameFrom[end];
+                result.Add(end);
+            }
+
+            result.Reverse();
+            return new Queue<MapField>(result.Skip(1));
+        }
+
+        private float Distance(MapField a, MapField b)
+        {
+            return (float) Math.Sqrt((a.X - b.X)*(a.X - b.X) + (a.Y - b.Y)*(a.Y - b.Y));
+        }
+
+        private List<MapField> GetNeighbors(MapField field, IKnowledge knowledge)
+        {
+            var list = new List<Vector2i>(8)
+            {
+                new Vector2i(field.X - 1, field.Y - 1),
+                new Vector2i(field.X - 1, field.Y),
+                new Vector2i(field.X - 1, field.Y + 1),
+                new Vector2i(field.X, field.Y - 1),
+                new Vector2i(field.X, field.Y + 1),
+                new Vector2i(field.X + 1, field.Y - 1),
+                new Vector2i(field.X + 1, field.Y),
+                new Vector2i(field.X + 1, field.Y + 1),
+            };
+
+            var result = list
+                .Where(t => t.X >= 0 && t.X < Width && t.Y >= 0 && t.Y < Height)
+                .Select(t => Fields[t.X, t.Y]);
+            return result.ToList();
+            if (!knowledge.KnownFields.Contains(field))
+                result = result.Where(t => knowledge.KnownFields.Contains(t)); // from unkown we can only go to known
+            else
+                result = result.Where(t => !knowledge.KnownFields.Contains(t) || (knowledge.KnownFields.Contains(t) && t.Type != FieldType.Blocked && t.Type != FieldType.Danger));
+
+            return result.ToList();
+        }
+
+        //private class HeapData : IComparable<HeapData>
+        //{
+        //    public HeapData(int cost, MapField field)
+        //    {
+        //        FScore = cost;
+        //        Field = field;
+        //    }
+
+        //    public int FScore { get; set; }
+        //    public MapField Field { get; }
+
+        //    public int CompareTo(HeapData other)
+        //    {
+        //        if (this == other)
+        //            throw new Exception();
+
+        //        return FScore.CompareTo(other.FScore);
+        //    }
+        //}
     }
 
-    internal enum FieldType
+    public enum FieldType
     {
         Empty = 0,
         Food,

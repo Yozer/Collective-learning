@@ -44,10 +44,7 @@ namespace Collective_learning.GUI{
                     _bounds.Height +=bs.GetGlobalBound().Height;
                 }
                 else {
-                    //System.Console.WriteLine(_bounds.Width);
                     _bounds.Width +=bs.GetGlobalBound().Width;
-                   //System.Console.WriteLine(_bounds.Width);
-
                 }
             }
 

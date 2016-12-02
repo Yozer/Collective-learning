@@ -72,7 +72,6 @@ namespace Collective_learning.GUI.BasicControllers{
             float from = bound.Left;
             float to = bound.Left+bound.Width;
             float actual = _scroll.Position.X;
-            //System.Console.WriteLine("Left:"+from+" Right"+to+" actual"+actual);
 
             float percantage = (actual-from)/(to-from);
             float value = (valueTo-valueFrom)*percantage+valueFrom;

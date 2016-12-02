@@ -33,16 +33,6 @@ namespace Collective_learning.GUI{
 
             shape = new RectangleShape();
 
-            FloatRect frs;
-
-            foreach(Box bx in boxList){
-                frs = bx.GetGlobalBound();
-                System.Console.Write("Left:"+frs.Left);
-                System.Console.Write(" Top:"+frs.Top);
-                System.Console.Write(" Width:"+frs.Width);
-                System.Console.WriteLine(" Height:"+frs.Height);
-
-            }
         }
         
         private void AddBox(Box box){
@@ -52,7 +42,6 @@ namespace Collective_learning.GUI{
             box.SetPosition(new Vector2f(_bounds.Left, _bounds.Height+_bounds.Top));
             boxList.Add(box);
             _bounds.Height+=box.GetGlobalBound().Height;
-            System.Console.WriteLine(_bounds.Height);
 
 
         }
@@ -88,7 +77,6 @@ namespace Collective_learning.GUI{
 
         public FloatRect GetBound(){
             
-
             return shape.GetGlobalBounds();
         }
 

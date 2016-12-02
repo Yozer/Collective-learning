@@ -19,6 +19,7 @@ namespace Collective_learning
 
         private Vector2i _lastDragPoint;
         private float _lastX;
+        private Panel pl;
 
         internal static SimulationWindow Create(ISimulation simulation)
         {
@@ -49,7 +50,6 @@ namespace Collective_learning
             
         }
 
-        Panel pl;
         private void CreateEventHandlers()
         {
             Closed += (s, e) => Close();
@@ -71,15 +71,6 @@ namespace Collective_learning
         }
 
         private void OnClick(object sender,MouseButtonEventArgs args){
-              //System.Console.WriteLine(args.X+"-"+args.Y);
-              Vector2i coord = new Vector2i(args.X,args.Y);
-              var posi = Mouse.GetPosition();
-              //System.Console.WriteLine("mouse get positon" + posi.X+"-"+posi.Y);
-              Vector2f cos = MapPixelToCoords(coord);
-            //System.Console.WriteLine(cos.X+"-"+cos.Y);
-
-              //System.Console.WriteLine("Center "+pl.Center.X+"-"+pl.Center.Y);
-              //System.Console.WriteLine("Size "+pl.Size.X+"-"+pl.Size.Y);
               pl.OnClick(sender,args);
         }
 

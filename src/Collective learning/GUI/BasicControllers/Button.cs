@@ -75,19 +75,6 @@ namespace Collective_learning.GUI.BasicControllers
 
         }
 
-        public override void Move(MouseMoveEventArgs args)
-        {
-            if (_sprite.GetGlobalBounds().Contains(args.X, args.Y))
-            {
-                _sprite.Texture = ButtonSettings.TextureOver;
-            }
-            else
-            {
-                _sprite.Texture = ButtonSettings.Texture;
-            }
-
-        }
-
         public override void OnClick(RenderWindow window, MouseButtonEventArgs args)
         {
             Vector2f arg = window.MapPixelToCoords(new Vector2i(args.X, args.Y));

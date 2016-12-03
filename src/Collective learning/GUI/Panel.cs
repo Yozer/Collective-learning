@@ -20,21 +20,22 @@ namespace Collective_learning.GUI
             _simulationWindow = window;
             _bounds = new FloatRect(0, 0, 0, 0);
             _boxList = new List<Box>();
-            Box box = new Box();
-            box.AddController(new Slider("test", 0, 4, 1));
-            box.AddController(new Slider("Try2 dluzszy", 1, 2, 1));
-            box.AddController(new Slider("test3", 1, 2, 1.5f));
-            AddBox(box);
+            //Box box = new Box();
+            //box.AddController(new Slider("Szybkoœæ symulacji [s]", 0.01f, 2, 0.1f));
+            ////box.AddController(new Button("test"));
+            ////box.AddController(new Slider("Try2 dluzszy", 1, 2, 1));
+            ////box.AddController(new Slider("test3", 1, 2, 1.5f));
+            //AddBox(box);
 
-            Box box2 = new Box(vertical: false);
-            box2.AddController(new Button("test"));
-            box2.AddController(new Button("Wyzyny2"));
-            AddBox(box2);
+            //Box box2 = new Box(vertical: false);
+            //box2.AddController(new Button("test"));
+            //box2.AddController(new Button("Wyzyny2"));
+            //AddBox(box2);
 
             FillColor = new Color(70, 70, 70);
         }
 
-        private void AddBox(Box box)
+        public void AddBox(Box box)
         {
             if (_boxList == null)
             {

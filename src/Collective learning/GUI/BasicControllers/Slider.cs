@@ -15,16 +15,18 @@ namespace Collective_learning.GUI.BasicControllers
         private readonly RectangleShape _bar;
         private readonly float _valueFrom;
         private readonly float _valueTo;
-        private float _currentValue;
 
         private Vector2f _position;
         private Vector2i _lastDragPoint;
+
+        public delegate void ChangedEventHandler(float value);
+
+        public event ChangedEventHandler OnChange;
 
         public Slider(string text, float fromV, float toV, float initValue)
         {
             _valueFrom = fromV;
             _valueTo = toV;
-            _currentValue = initValue;
             _position = new Vector2f(0, 0);
 
             _text = new Text(text, SliderSettings.DefaultFont, SliderSettings.TextSize);
@@ -58,11 +60,6 @@ namespace Collective_learning.GUI.BasicControllers
             _text.Position = new Vector2f((_bar.Position.X + SliderSettings.BarWidth - _valueText.Position.X - _text.GetGlobalBounds().Width) / 2, 0);
         }
 
-        public override void Move(MouseMoveEventArgs args)
-        {
-
-        }
-
         public override void Dispose()
         {
             _valueText.Dispose();
@@ -82,11 +79,11 @@ namespace Collective_learning.GUI.BasicControllers
             float to = bound.Left + bound.Width;
             float actual = _scroll.Position.X;
 
-            float percantage = (actual - from) / (to - from);
-            float value = (_valueTo - _valueFrom) * percantage + _valueFrom;
+            float percentage = (actual - from) / (to - from);
+            float value = (_valueTo - _valueFrom) * percentage + _valueFrom;
             _valueText.DisplayedString = value.ToString("0.000");
 
-
+            OnChange?.Invoke(value);
         }
 
         public override void Drag(Vector2i point)

@@ -87,11 +87,6 @@ namespace Collective_learning.GUI
             ObjectsList.ForEach(t => t.Drag(point));
         }
 
-        public void Move(object sender, MouseMoveEventArgs args)
-        {
-            ObjectsList.ForEach(t => t.Move(args));
-        }
-
         public void OnClick(RenderWindow sender, MouseButtonEventArgs args)
         {
             ObjectsList.ForEach(t => t.OnClick(sender, args));

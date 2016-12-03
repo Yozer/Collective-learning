@@ -15,7 +15,6 @@ namespace Collective_learning.GUI.BasicControllers.Base
         public abstract Vector2f GetPosition();
         public abstract FloatRect GetGlobalBound();
         public abstract FloatRect GetLocalBound();
-        public abstract void Move(MouseMoveEventArgs args);
         public abstract void Dispose();
     }
 }

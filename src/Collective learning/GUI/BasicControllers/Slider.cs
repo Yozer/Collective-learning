@@ -1,4 +1,3 @@
-using System;
 using Collective_learning.GUI.BasicControllers.Base;
 using SFML.Graphics;
 using SFML.System;
@@ -20,6 +19,7 @@ namespace Collective_learning.GUI.BasicControllers
         private Vector2i _lastDragPoint;
 
         public delegate void ChangedEventHandler(float value);
+
         public event ChangedEventHandler OnChange;
 
         public Slider(string text, float fromV, float toV, float initValue)
@@ -28,35 +28,43 @@ namespace Collective_learning.GUI.BasicControllers
             _valueTo = toV;
             _position = new Vector2f(0, 0);
 
-            _text = new Text(text, SliderSettings.DefaultFont, SliderSettings.TextSize);
-            _text.Color = SliderSettings.TextColor;
-            _text.Style = SliderSettings.TextStyle;
+            _text = new Text(text, SliderSettings.DefaultFont, SliderSettings.TextSize)
+            {
+                Color = SliderSettings.TextColor,
+                Style = SliderSettings.TextStyle
+            };
 
-            _valueText = new Text(initValue.ToString("0.000"), SliderSettings.DefaultFont, SliderSettings.TextSize);
-            _valueText.Color = SliderSettings.TextColor;
-            _valueText.Style = SliderSettings.TextStyle;
+            _valueText = new Text(initValue.ToString("0.000"), SliderSettings.DefaultFont, SliderSettings.TextSize)
+            {
+                Color = SliderSettings.TextColor,
+                Style = SliderSettings.TextStyle
+            };
 
             FloatRect valueFr = _valueText.GetGlobalBounds();
 
             _valueText.Position = new Vector2f(0, SliderSettings.TextHeightMargin);
 
-            _bar = new RectangleShape();
-            _bar.FillColor = SliderSettings.BarColor;
-            _bar.OutlineColor = Color.Black;
-            _bar.OutlineThickness = 1;
-            _bar.Size = new Vector2f(SliderSettings.BarWidth, SliderSettings.BarHeight);
-            _bar.Position = new Vector2f(SliderSettings.TextSize + valueFr.Width, SliderSettings.TextHeightMargin + SliderSettings.BarHeight);
+            _bar = new RectangleShape
+            {
+                FillColor = SliderSettings.BarColor,
+                OutlineColor = Color.Black,
+                OutlineThickness = 1,
+                Size = new Vector2f(SliderSettings.BarWidth, SliderSettings.BarHeight),
+                Position = new Vector2f(SliderSettings.TextSize + valueFr.Width, SliderSettings.TextHeightMargin + SliderSettings.BarHeight)
+            };
 
-            _scroll = new RectangleShape();
-            _scroll.Origin = new Vector2f(SliderSettings.ScrollWidth / 2f, 0);
-            _scroll.FillColor = SliderSettings.ScrollColor;
-            _scroll.OutlineColor = Color.Black;
-            _scroll.OutlineThickness = 1;
-            _scroll.Size = new Vector2f(SliderSettings.ScrollWidth, SliderSettings.ScrollHeight);
-            _scroll.Position = _bar.Position + (new Vector2f(0, -SliderSettings.BarHeight));
-            _scroll.Position += new Vector2f(((initValue - fromV) / (toV - fromV)) * SliderSettings.BarWidth, 0);
+            _scroll = new RectangleShape
+            {
+                Origin = new Vector2f(SliderSettings.ScrollWidth/2f, 0),
+                FillColor = SliderSettings.ScrollColor,
+                OutlineColor = Color.Black,
+                OutlineThickness = 1,
+                Size = new Vector2f(SliderSettings.ScrollWidth, SliderSettings.ScrollHeight),
+                Position = _bar.Position + (new Vector2f(0, -SliderSettings.BarHeight))
+            };
 
-            _text.Position = new Vector2f((_bar.Position.X + SliderSettings.BarWidth - _valueText.Position.X - _text.GetGlobalBounds().Width) / 2, 0);
+            _scroll.Position += new Vector2f(((initValue - fromV)/(toV - fromV))*SliderSettings.BarWidth, 0);
+            _text.Position = new Vector2f((_bar.Position.X + SliderSettings.BarWidth - _valueText.Position.X - _text.GetGlobalBounds().Width)/2, 0);
         }
 
         public override void Dispose()
@@ -71,8 +79,8 @@ namespace Collective_learning.GUI.BasicControllers
             float to = bound.Left + bound.Width;
             float actual = _scroll.Position.X;
 
-            float percentage = (actual - from) / (to - from);
-            float value = (_valueTo - _valueFrom) * percentage + _valueFrom;
+            float percentage = (actual - from)/(to - from);
+            float value = (_valueTo - _valueFrom)*percentage + _valueFrom;
             _valueText.DisplayedString = value.ToString("0.000");
 
             OnChange?.Invoke(value);
@@ -80,8 +88,8 @@ namespace Collective_learning.GUI.BasicControllers
 
         public override void Drag(Vector2i point)
         {
-            if (Mouse.IsButtonPressed(Mouse.Button.Left) && ((_lastDragPoint == default(Vector2i) && _scroll.GetGlobalBounds().Contains(point.X, point.Y)) 
-                || (_lastDragPoint != default(Vector2i) && _bar.GetGlobalBounds().Left - 10 <= point.X && _bar.GetGlobalBounds().Left + _bar.Size.X + 10 >= point.X)))
+            if (Mouse.IsButtonPressed(Mouse.Button.Left) && ((_lastDragPoint == default(Vector2i) && _scroll.GetGlobalBounds().Contains(point.X, point.Y))
+                                                             || (_lastDragPoint != default(Vector2i) && _bar.GetGlobalBounds().Left - 10 <= point.X && _bar.GetGlobalBounds().Left + _bar.Size.X + 10 >= point.X)))
             {
                 if (_lastDragPoint != default(Vector2i))
                 {
@@ -116,26 +124,28 @@ namespace Collective_learning.GUI.BasicControllers
             _bar.Position += offset;
             _scroll.Position += offset;
             _text.Position += offset;
-
-
         }
+
         public override Vector2f GetPosition()
         {
-
             return new Vector2f(_position.X, _position.Y);
         }
+
         public override FloatRect GetGlobalBound()
         {
-            FloatRect result = new FloatRect();
-            result.Left = _position.X;
-            result.Top = _position.Y;
+            FloatRect result = new FloatRect
+            {
+                Left = _position.X,
+                Top = _position.Y
+            };
 
             float height = _scroll.GetGlobalBounds().Top + _scroll.GetGlobalBounds().Height - result.Top;
-            float width = _bar.GetGlobalBounds().Left + _bar.GetGlobalBounds().Width - result.Left + _scroll.GetGlobalBounds().Width / 2;
+            float width = _bar.GetGlobalBounds().Left + _bar.GetGlobalBounds().Width - result.Left + _scroll.GetGlobalBounds().Width/2;
             result.Height = height;
             result.Width = width;
             return result;
         }
+
         public override FloatRect GetLocalBound()
         {
             return _text.GetLocalBounds();
@@ -148,9 +158,5 @@ namespace Collective_learning.GUI.BasicControllers
             target.Draw(_bar);
             target.Draw(_scroll);
         }
-
-
     }
-
 }
-

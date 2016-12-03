@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Collective_learning.GUI.BasicControllers.Base;
 using SFML.Graphics;
@@ -15,6 +14,7 @@ namespace Collective_learning.GUI
         private Vector2f _position;
 
         public FloatRect GlobalBound => _bounds;
+
         public Box(bool vertical, Vector2f pos)
         {
             _vertical = vertical;
@@ -56,17 +56,8 @@ namespace Collective_learning.GUI
         {
             Vector2f prev = last.GetPosition();
             FloatRect tmp = last.GetGlobalBound();
-            Vector2f tmpVect;
-            if (_vertical)
-            {
-                tmpVect = new Vector2f(_position.X, tmp.Height);
-            }
-            else
-            {
-                tmpVect = new Vector2f(tmp.Width, _position.Y);
-            }
+            var tmpVect = _vertical ? new Vector2f(_position.X, tmp.Height) : new Vector2f(tmp.Width, _position.Y);
             return prev + tmpVect;
-
         }
 
         public void SetPosition(Vector2f pos)

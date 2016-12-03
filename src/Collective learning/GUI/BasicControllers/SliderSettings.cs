@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using SFML.Graphics;
 
@@ -15,10 +14,10 @@ namespace Collective_learning.GUI.BasicControllers
         public static readonly Color BarColor = new Color(112, 112, 112);
         public static readonly Color ScrollColor = new Color(104, 106, 101);
 
-        public static readonly float TextHeightMargin = TextSize * 1.5f;
+        public static readonly float TextHeightMargin = TextSize*1.5f;
         public static readonly int BarWidth = 210;
         public static readonly int BarHeight = 10;
         public static readonly int ScrollWidth = BarHeight;
-        public static readonly int ScrollHeight = 3 * BarHeight;
+        public static readonly int ScrollHeight = 3*BarHeight;
     }
 }

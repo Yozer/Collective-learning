@@ -19,7 +19,7 @@ namespace Collective_learning
 
         private Vector2i _lastDragPoint;
         private float _lastX;
-        private Panel pl;
+        private readonly Panel _panel;
 
         internal static SimulationWindow Create(ISimulation simulation)
         {
@@ -31,7 +31,7 @@ namespace Collective_learning
             return new SimulationWindow(simulation, contextSettings);
         }
 
-        private SimulationWindow(ISimulation simulation, ContextSettings contextSettings) 
+        private SimulationWindow(ISimulation simulation, ContextSettings contextSettings)
             : base(new VideoMode(WindowWidth, WindowHeight), WindowTitle, Styles.Default, contextSettings)
         {
             _simulation = simulation;
@@ -42,12 +42,12 @@ namespace Collective_learning
             SetActive();
             CreateEventHandlers();
 
-            _simulationView = new View(new FloatRect(0, 0, 3*WindowWidth/4, WindowHeight));
-            _simulationView.Move(new Vector2f(-(WindowWidth - simulation.Width) / 2, - (WindowHeight - simulation.Height) / 2));
-            _simulationView.Viewport = new FloatRect(0.25f,0,0.75f,1);
-            pl = new Panel(new FloatRect(0,0,WindowWidth/4,WindowHeight),this);
-            pl.Viewport = new FloatRect(0,0,0.25f,1);
-            
+            _simulationView = new View(new FloatRect(0, 0, 3 * WindowWidth / 4, WindowHeight));
+            _simulationView.Move(new Vector2f(-(WindowWidth - simulation.Width) / 2, -(WindowHeight - simulation.Height) / 2));
+            _simulationView.Viewport = new FloatRect(0.25f, 0, 0.75f, 1);
+            _panel = new Panel(new FloatRect(0, 0, WindowWidth / 4f, WindowHeight), this);
+            _panel.Viewport = new FloatRect(0, 0, 0.25f, 1);
+
         }
 
         private void CreateEventHandlers()
@@ -60,29 +60,33 @@ namespace Collective_learning
             MouseWheelScrolled += Scroll;
         }
 
-        private void Scroll(object sender,MouseWheelScrollEventArgs args){
-            
-            if(args.Delta>0){
+        private void Scroll(object sender, MouseWheelScrollEventArgs args)
+        {
+
+            if (args.Delta > 0)
+            {
                 _simulationView.Zoom(1.1f);
             }
-            else {
+            else
+            {
                 _simulationView.Zoom(0.9f);
             }
         }
 
-        private void OnClick(object sender,MouseButtonEventArgs args){
-              pl.OnClick(sender,args);
+        private void OnClick(object sender, MouseButtonEventArgs args)
+        {
+            _panel.OnClick(sender, args);
         }
 
         private void OnResized(object sender, SizeEventArgs sizeEventArgs)
         {
             _simulationView.Size = new Vector2f(sizeEventArgs.Width, sizeEventArgs.Height);
-            
+
         }
 
         private void OnKeyPressed(object sender, KeyEventArgs args)
         {
-            if(args.Code == Keyboard.Key.Escape)
+            if (args.Code == Keyboard.Key.Escape)
                 Close();
         }
 
@@ -96,21 +100,23 @@ namespace Collective_learning
                     var pos = Mouse.GetPosition(this);
                     var offset = _lastDragPoint - pos;
                     _simulationView.Move(new Vector2f(offset.X, offset.Y));
-                    
+
                 }
                 _lastDragPoint = Mouse.GetPosition(this);
 
-                if(_lastX != default(int)){
-                    var pos1 =  Mouse.GetPosition(this);
+                if (Math.Abs(_lastX - default(int)) > 0.001)
+                {
+                    var pos1 = Mouse.GetPosition(this);
                     var pos = MapPixelToCoords(pos1);
-                    var offset = pos.X-_lastX;
-                    int offset1 = MapCoordsToPixel(new Vector2f(offset,0)).X;
+                    var offset = pos.X - _lastX;
+                    int offset1 = MapCoordsToPixel(new Vector2f(offset, 0)).X;
 
-                    if(pl.GetBound().Contains(pos.X,pos.Y)){
-                        pl.Dragging(pos.X,pos.Y,offset1);
+                    if (_panel.Bounds.Contains(pos.X, pos.Y))
+                    {
+                        _panel.Dragging(pos.X, pos.Y, offset1);
                     }
                 }
-                _lastX = MapPixelToCoords( Mouse.GetPosition(this)).X;
+                _lastX = MapPixelToCoords(Mouse.GetPosition(this)).X;
 
             }
             else
@@ -121,7 +127,6 @@ namespace Collective_learning
         }
         internal void Update(float delta)
         {
-
             HandleDragging();
             _simulation.Update(delta);
         }
@@ -129,8 +134,8 @@ namespace Collective_learning
         {
             SetView(_simulationView);
             Draw(_simulation);
-            SetView(pl);
-            Draw(pl);
+            SetView(_panel);
+            Draw(_panel);
         }
     }
 }

@@ -108,7 +108,6 @@ namespace SFML.Graphics
         /// will cause the outline to be displayed in the fill area of the text.
         /// </remarks>
         ////////////////////////////////////////////////////////////
-        [Obsolete]
         public Color Color
         {
             get { return sfText_getColor(CPointer); }
@@ -354,7 +353,7 @@ namespace SFML.Graphics
         [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl)]
         static extern void sfText_destroy(IntPtr CPointer);
 
-        [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), Obsolete]
+        [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl)]
         static extern void sfText_setColor(IntPtr CPointer, Color Color);
 
         [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl)]
@@ -366,7 +365,7 @@ namespace SFML.Graphics
         [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl)]
         static extern void sfText_setOutlineThickness(IntPtr CPointer, float thickness);
 
-        [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl), Obsolete]
+        [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl)]
         static extern Color sfText_getColor(IntPtr CPointer);
 
         [DllImport("csfml-graphics", CallingConvention = CallingConvention.Cdecl)]

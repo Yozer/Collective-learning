@@ -179,7 +179,7 @@ namespace Collective_learning.Simulation
             if (!knowledge.KnownFields.Contains(field))
                 result = result.Where(t => knowledge.KnownFields.Contains(t) && !knowledge.Negative.Contains(t) && !knowledge.Blocked.Contains(t)); // from unknown we can only go to known
             else
-                result = result.Where(t => !knowledge.KnownFields.Contains(t) || (knowledge.KnownFields.Contains(t) && !knowledge.Negative.Contains(t) && !knowledge.Blocked.Contains(t))); // from known we can go anywhere but not negative
+                result = result.Where(t => !knowledge.KnownFields.Contains(t) || (!knowledge.Negative.Contains(t) && !knowledge.Blocked.Contains(t))); // from known we can go anywhere but not negative
 
             return result.ToList();
         }

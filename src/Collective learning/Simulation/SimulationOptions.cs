@@ -6,7 +6,7 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 1;
+        public int AgentsCount { get; } = 15;
         public const float ExplorationThreshold = 0.9f;
 
 

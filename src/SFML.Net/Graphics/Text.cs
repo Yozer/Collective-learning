@@ -111,8 +111,8 @@ namespace SFML.Graphics
         [Obsolete]
         public Color Color
         {
-            get { return sfText_getFillColor(CPointer); }
-            set { sfText_setFillColor(CPointer, value); }
+            get { return sfText_getColor(CPointer); }
+            set { sfText_setColor(CPointer, value); }
         }
 
         ////////////////////////////////////////////////////////////

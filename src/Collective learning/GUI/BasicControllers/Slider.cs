@@ -18,6 +18,7 @@ namespace Collective_learning.GUI.BasicControllers
         private float _currentValue;
 
         private Vector2f _position;
+        private Vector2i _lastDragPoint;
 
         public Slider(string text, float fromV, float toV, float initValue)
         {
@@ -88,22 +89,33 @@ namespace Collective_learning.GUI.BasicControllers
 
         }
 
-        public override void Drag(float x, float y, int offsetX)
+        public override void Drag(Vector2i point)
         {
-            if (_scroll.GetGlobalBounds().Contains(x, y))
+            if (Mouse.IsButtonPressed(Mouse.Button.Left) && ((_lastDragPoint == default(Vector2i) && _scroll.GetGlobalBounds().Contains(point.X, point.Y)) 
+                || (_lastDragPoint != default(Vector2i) && _bar.GetGlobalBounds().Left - 10 <= point.X && _bar.GetGlobalBounds().Left + _bar.Size.X + 10 >= point.X)))
             {
-                _scroll.Position += new Vector2f(offsetX, 0);
-                FloatRect barBounds = _bar.GetGlobalBounds();
-                if (_scroll.Position.X < barBounds.Left)
+                if (_lastDragPoint != default(Vector2i))
                 {
-                    _scroll.Position = new Vector2f(barBounds.Left, _scroll.Position.Y);
-                }
-                else if (_scroll.Position.X > (barBounds.Left + barBounds.Width))
-                {
-                    _scroll.Position = new Vector2f(barBounds.Left + barBounds.Width, _scroll.Position.Y);
+                    var offset = _lastDragPoint - point;
+                    _scroll.Position -= new Vector2f(offset.X, 0);
 
+                    FloatRect barBounds = _bar.GetGlobalBounds();
+                    if (_scroll.Position.X < barBounds.Left)
+                    {
+                        _scroll.Position = new Vector2f(barBounds.Left, _scroll.Position.Y);
+                    }
+                    else if (_scroll.Position.X > (barBounds.Left + barBounds.Width))
+                    {
+                        _scroll.Position = new Vector2f(barBounds.Left + barBounds.Width, _scroll.Position.Y);
+                    }
+                    UpdateTextValue();
                 }
-                UpdateTextValue();
+
+                _lastDragPoint = point;
+            }
+            else
+            {
+                _lastDragPoint = default(Vector2i);
             }
         }
 

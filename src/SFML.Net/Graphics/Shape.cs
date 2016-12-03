@@ -132,7 +132,7 @@ namespace SFML.Graphics
         /// <param name="target">Render target to draw to</param>
         /// <param name="states">Current render states</param>
         ////////////////////////////////////////////////////////////
-        public void Draw(RenderTarget target, RenderStates states)
+        public virtual void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
             RenderStates.MarshalData marshaledStates = states.Marshal();

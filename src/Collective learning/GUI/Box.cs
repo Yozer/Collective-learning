@@ -82,15 +82,9 @@ namespace Collective_learning.GUI
             }
         }
 
-        public void Dragging(float x, float y, int offsetX)
+        public void Dragging(Vector2i point)
         {
-            foreach (BasicController bs in ObjectsList)
-            {
-                if (bs.GetGlobalBound().Contains(x, y))
-                {
-                    bs.Drag(x, y, offsetX);
-                }
-            }
+            ObjectsList.ForEach(t => t.Drag(point));
         }
 
         public void Move(object sender, MouseMoveEventArgs args)

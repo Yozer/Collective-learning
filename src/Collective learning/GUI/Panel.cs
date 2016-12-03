@@ -9,16 +9,13 @@ using Collective_learning.GUI.BasicControllers;
 
 namespace Collective_learning.GUI
 {
-    public class Panel : View, Drawable
+    public class Panel : RectangleShape
     {
         private readonly RenderWindow _simulationWindow;
-        private readonly RectangleShape _shape;
         private List<Box> _boxList;
         private FloatRect _bounds;
 
-        public FloatRect Bounds => _shape.GetGlobalBounds();
-
-        public Panel(FloatRect fr, RenderWindow window) : base(fr)
+        public Panel(RenderWindow window)
         {
             _simulationWindow = window;
             _bounds = new FloatRect(0, 0, 0, 0);
@@ -34,8 +31,7 @@ namespace Collective_learning.GUI
             box2.AddController(new Button("Wyzyny2"));
             AddBox(box2);
 
-            _shape = new RectangleShape();
-
+            FillColor = new Color(70, 70, 70);
         }
 
         private void AddBox(Box box)
@@ -49,19 +45,15 @@ namespace Collective_learning.GUI
             _bounds.Height += box.GlobalBound.Height;
         }
 
-
-        public void Draw(RenderTarget target, RenderStates states)
+        public override void Draw(RenderTarget target, RenderStates states)
         {
-            _shape.Size = new Vector2f(Size.X, Size.Y);
-            _shape.FillColor = new Color(70, 70, 70);
-            target.Draw(_shape);
-
+            base.Draw(target, states);
             _boxList.ForEach(target.Draw);
         }
 
-        public void Dragging(float x, float y, int offsetX)
+        public void Dragging(Vector2i point)
         {
-            _boxList.FirstOrDefault(t => t.GlobalBound.Contains(x, y))?.Dragging(x, y, offsetX);
+            _boxList.ForEach(t => t.Dragging(point));
         }
 
         public void OnClick(object sender, MouseButtonEventArgs args)

@@ -103,11 +103,6 @@ namespace Collective_learning.GUI.BasicControllers
 
         }
 
-        public override void Drag(float x, float y, int offsetX)
-        {
-            throw new InvalidOperationException();
-        }
-
         public override FloatRect GetLocalBound()
         {
             return _shape.GetLocalBounds();

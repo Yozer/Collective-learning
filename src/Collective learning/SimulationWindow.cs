@@ -3,7 +3,6 @@ using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using Collective_learning.GUI.BasicControllers;
 using Collective_learning.GUI;
 
 namespace Collective_learning
@@ -12,14 +11,13 @@ namespace Collective_learning
     {
         private readonly ISimulation _simulation;
         private readonly View _simulationView;
+        private readonly Panel _panel;
 
         private const string WindowTitle = "Collective Learning 0.1";
         private const uint WindowWidth = 1280u;
         private const uint WindowHeight = 768u;
 
         private Vector2i _lastDragPoint;
-        private float _lastX;
-        private readonly Panel _panel;
 
         internal static SimulationWindow Create(ISimulation simulation)
         {
@@ -42,12 +40,14 @@ namespace Collective_learning
             SetActive();
             CreateEventHandlers();
 
-            _simulationView = new View(new FloatRect(0, 0, 3 * WindowWidth / 4, WindowHeight));
-            _simulationView.Move(new Vector2f(-(WindowWidth - simulation.Width) / 2, -(WindowHeight - simulation.Height) / 2));
-            _simulationView.Viewport = new FloatRect(0.25f, 0, 0.75f, 1);
-            _panel = new Panel(new FloatRect(0, 0, WindowWidth / 4f, WindowHeight), this);
-            _panel.Viewport = new FloatRect(0, 0, 0.25f, 1);
+            _simulationView = new View(new FloatRect(0, 0, WindowWidth, WindowHeight));
+            _simulationView.Move(new Vector2f(-WindowWidth/4f - (WindowWidth * 3/4f - simulation.Width) / 2, -(WindowHeight - simulation.Height) / 2));
 
+            _panel = new Panel(this)
+            {
+                Position = new Vector2f(0, 0),
+                Size = new Vector2f(WindowWidth/4f, WindowHeight)
+            };
         }
 
         private void CreateEventHandlers()
@@ -62,15 +62,7 @@ namespace Collective_learning
 
         private void Scroll(object sender, MouseWheelScrollEventArgs args)
         {
-
-            if (args.Delta > 0)
-            {
-                _simulationView.Zoom(1.1f);
-            }
-            else
-            {
-                _simulationView.Zoom(0.9f);
-            }
+            _simulationView.Zoom(args.Delta > 0 ? 1.1f : 0.9f);
         }
 
         private void OnClick(object sender, MouseButtonEventArgs args)
@@ -91,50 +83,41 @@ namespace Collective_learning
         }
 
 
-        private void HandleDragging()
+        private void HandleDragging(Vector2i mousePosition)
         {
-            if (Mouse.IsButtonPressed(Mouse.Button.Left) && ((_lastDragPoint == default(Vector2i) && HasFocus()) || _lastDragPoint != default(Vector2i)))
+            if (Mouse.IsButtonPressed(Mouse.Button.Left) && ((_lastDragPoint == default(Vector2i) && !_panel.GetGlobalBounds().Contains(mousePosition.X, mousePosition.Y)) || _lastDragPoint != default(Vector2i)))
             {
                 if (_lastDragPoint != default(Vector2i))
                 {
-                    var pos = Mouse.GetPosition(this);
-                    var offset = _lastDragPoint - pos;
+                    var offset = _lastDragPoint - mousePosition;
                     _simulationView.Move(new Vector2f(offset.X, offset.Y));
 
                 }
                 _lastDragPoint = Mouse.GetPosition(this);
-
-                if (Math.Abs(_lastX - default(int)) > 0.001)
-                {
-                    var pos1 = Mouse.GetPosition(this);
-                    var pos = MapPixelToCoords(pos1);
-                    var offset = pos.X - _lastX;
-                    int offset1 = MapCoordsToPixel(new Vector2f(offset, 0)).X;
-
-                    if (_panel.Bounds.Contains(pos.X, pos.Y))
-                    {
-                        _panel.Dragging(pos.X, pos.Y, offset1);
-                    }
-                }
-                _lastX = MapPixelToCoords(Mouse.GetPosition(this)).X;
-
             }
             else
             {
                 _lastDragPoint = default(Vector2i);
-                _lastX = default(int);
             }
         }
         internal void Update(float delta)
         {
-            HandleDragging();
+            var mousePoint = Mouse.GetPosition(this);
+            if (HasFocus())
+            {
+                if(_panel.GetGlobalBounds().Contains(mousePoint.X, mousePoint.Y))
+                    _panel.Dragging(mousePoint);
+                else
+                    HandleDragging(mousePoint);
+            }
+
             _simulation.Update(delta);
         }
         internal void Draw()
         {
             SetView(_simulationView);
             Draw(_simulation);
-            SetView(_panel);
+            SetView(DefaultView);
             Draw(_panel);
         }
     }

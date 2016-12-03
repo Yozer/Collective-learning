@@ -18,7 +18,7 @@ namespace Collective_learning.GUI
         public Panel(RenderWindow window)
         {
             _simulationWindow = window;
-            _bounds = new FloatRect(0, 0, 0, 0);
+            _bounds = new FloatRect(10, 10, 0, 0);
             _boxList = new List<Box>();
             //Box box = new Box();
             //box.AddController(new Slider("Szybkoœæ symulacji [s]", 0.01f, 2, 0.1f));

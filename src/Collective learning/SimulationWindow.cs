@@ -5,6 +5,7 @@ using SFML.System;
 using SFML.Window;
 using Collective_learning.GUI;
 using Collective_learning.GUI.BasicControllers;
+using Collective_learning.Simulation;
 
 namespace Collective_learning
 {
@@ -55,7 +56,7 @@ namespace Collective_learning
         private void InitGui()
         {
             Box box = new Box();
-            var slider = new Slider("Szybkość symulacji [s]", 0.01f, 2, 0.1f);
+            var slider = new Slider("Szybkość symulacji", 0.1f, 40f, 3);
             slider.OnChange += UpdateSimulationSpeed;
             box.AddController(slider);
 
@@ -64,7 +65,7 @@ namespace Collective_learning
 
         private void UpdateSimulationSpeed(float value)
         {
-            Simulation.SimulationOptions.AgentSpeed = value*8000;
+            Simulation.SimulationOptions.AgentSpeed = SimulationOptions.FieldHeight*value*1.5f;
         }
 
         private void CreateEventHandlers()

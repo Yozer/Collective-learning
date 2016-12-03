@@ -7,7 +7,12 @@ namespace Collective_learning.Simulation
     internal class SimulationOptions
     {
         public int AgentsCount { get; } = 15;
-        public static float AgentSpeed { get; set; } = 3*FieldWidth*1.5f;
+
+        public static float AgentSpeed
+        {
+            get { return _agentSpeed; }
+            set { _agentSpeed = value*1.5f*FieldWidth; }
+        }
 
         public const float ExplorationThreshold = 0.9f;
 
@@ -37,6 +42,8 @@ namespace Collective_learning.Simulation
             [FieldType.Water] = new Color(37, 226, 247), // blue
             [FieldType.Empty] = Color.White
         };
+
+        private static float _agentSpeed = 3*FieldWidth*1.5f;
 
         public static Random Random { get; } = new Random();
     }

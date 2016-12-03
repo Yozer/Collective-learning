@@ -20,6 +20,7 @@ namespace Collective_learning
         private const uint WindowHeight = 768u;
 
         private Vector2i _lastDragPoint;
+        private bool _paused = false;
 
         internal static SimulationWindow Create(ISimulation simulation)
         {
@@ -40,17 +41,17 @@ namespace Collective_learning
             SetVerticalSyncEnabled(true);
             SetFramerateLimit(60);
             SetActive();
-            CreateEventHandlers();
 
             _simulationView = new View(new FloatRect(0, 0, WindowWidth, WindowHeight));
             _simulationView.Move(new Vector2f(-WindowWidth/4f - (WindowWidth * 3/4f - simulation.Width) / 2, -(WindowHeight - simulation.Height) / 2));
 
-            _panel = new Panel(this)
+            _panel = new Panel
             {
                 Position = new Vector2f(0, 0),
                 Size = new Vector2f(WindowWidth/4f, WindowHeight)
             };
             InitGui();
+            CreateEventHandlers();
         }
 
         private void InitGui()
@@ -61,11 +62,23 @@ namespace Collective_learning
             box.AddController(slider);
 
             _panel.AddBox(box);
+
+            box = new Box(vertical: false);
+            var button = new Button("Pauza");
+            button.OnClick += PausedClicked;
+            box.AddController(button);
+            
+            _panel.AddBox(box);
+        }
+
+        private void PausedClicked()
+        {
+            _paused = !_paused;
         }
 
         private void UpdateSimulationSpeed(float value)
         {
-            Simulation.SimulationOptions.AgentSpeed = SimulationOptions.FieldHeight*value*1.5f;
+            SimulationOptions.AgentSpeed = value;
         }
 
         private void CreateEventHandlers()
@@ -73,7 +86,7 @@ namespace Collective_learning
             Closed += (s, e) => Close();
             KeyPressed += OnKeyPressed;
             Resized += OnResized;
-            MouseButtonPressed += OnClick;
+            MouseButtonPressed += _panel.ProcessClick;
 
             MouseWheelScrolled += Scroll;
         }
@@ -83,15 +96,9 @@ namespace Collective_learning
             _simulationView.Zoom(args.Delta > 0 ? 1.1f : 0.9f);
         }
 
-        private void OnClick(object sender, MouseButtonEventArgs args)
-        {
-            _panel.OnClick(sender, args);
-        }
-
         private void OnResized(object sender, SizeEventArgs sizeEventArgs)
         {
             _simulationView.Size = new Vector2f(sizeEventArgs.Width, sizeEventArgs.Height);
-
         }
 
         private void OnKeyPressed(object sender, KeyEventArgs args)
@@ -120,6 +127,9 @@ namespace Collective_learning
         }
         internal void Update(float delta)
         {
+            if(_paused)
+                return;
+
             var mousePoint = Mouse.GetPosition(this);
             if (HasFocus())
             {

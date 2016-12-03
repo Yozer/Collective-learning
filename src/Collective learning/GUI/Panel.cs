@@ -11,27 +11,13 @@ namespace Collective_learning.GUI
 {
     public class Panel : RectangleShape
     {
-        private readonly RenderWindow _simulationWindow;
         private List<Box> _boxList;
         private FloatRect _bounds;
 
-        public Panel(RenderWindow window)
+        public Panel()
         {
-            _simulationWindow = window;
             _bounds = new FloatRect(10, 10, 0, 0);
             _boxList = new List<Box>();
-            //Box box = new Box();
-            //box.AddController(new Slider("Szybkoœæ symulacji [s]", 0.01f, 2, 0.1f));
-            ////box.AddController(new Button("test"));
-            ////box.AddController(new Slider("Try2 dluzszy", 1, 2, 1));
-            ////box.AddController(new Slider("test3", 1, 2, 1.5f));
-            //AddBox(box);
-
-            //Box box2 = new Box(vertical: false);
-            //box2.AddController(new Button("test"));
-            //box2.AddController(new Button("Wyzyny2"));
-            //AddBox(box2);
-
             FillColor = new Color(70, 70, 70);
         }
 
@@ -41,9 +27,9 @@ namespace Collective_learning.GUI
             {
                 _boxList = new List<Box>();
             }
-            box.SetPosition(new Vector2f(_bounds.Left, _bounds.Height + _bounds.Top));
+            box.SetPosition(new Vector2f(_bounds.Left, _bounds.Height + _bounds.Top + 15));
             _boxList.Add(box);
-            _bounds.Height += box.GlobalBound.Height;
+            _bounds.Height += box.GlobalBound.Height + 15;
         }
 
         public override void Draw(RenderTarget target, RenderStates states)
@@ -57,9 +43,9 @@ namespace Collective_learning.GUI
             _boxList.ForEach(t => t.Dragging(point));
         }
 
-        public void OnClick(object sender, MouseButtonEventArgs args)
+        public void ProcessClick(object sender, MouseButtonEventArgs e)
         {
-            _boxList.ForEach(t => t.OnClick(_simulationWindow, args));
+            _boxList.ForEach(t => t.ProcessClick(e));
         }
     }
 }

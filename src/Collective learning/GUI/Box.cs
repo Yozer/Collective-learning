@@ -87,14 +87,14 @@ namespace Collective_learning.GUI
             ObjectsList.ForEach(t => t.Drag(point));
         }
 
-        public void OnClick(RenderWindow sender, MouseButtonEventArgs args)
-        {
-            ObjectsList.ForEach(t => t.OnClick(sender, args));
-        }
-
         public void Draw(RenderTarget target, RenderStates states)
         {
             ObjectsList.ForEach(target.Draw);
+        }
+
+        public void ProcessClick(MouseButtonEventArgs e)
+        {
+            ObjectsList.ForEach(t => t.ProcessClick(e));
         }
     }
 }

@@ -20,7 +20,6 @@ namespace Collective_learning.GUI.BasicControllers
         private Vector2i _lastDragPoint;
 
         public delegate void ChangedEventHandler(float value);
-
         public event ChangedEventHandler OnChange;
 
         public Slider(string text, float fromV, float toV, float initValue)
@@ -63,13 +62,6 @@ namespace Collective_learning.GUI.BasicControllers
         public override void Dispose()
         {
             _valueText.Dispose();
-        }
-
-        public override void OnClick(RenderWindow window, MouseButtonEventArgs args)
-        {
-            FloatRect fr = _scroll.GetGlobalBounds();
-            Vector2f pos = window.MapPixelToCoords(new Vector2i(args.X, args.Y));
-
         }
 
         private void UpdateTextValue()

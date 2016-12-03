@@ -12,22 +12,8 @@ namespace Collective_learning.GUI.BasicControllers
         private readonly RectangleShape _shape;
         private readonly Text _text;
 
-        public Vector2f Scale
-        {
-            get
-            {
-                return _text.Scale;
-            }
-            set
-            {
-                _shape.Scale = value;
-                _sprite.Scale = new Vector2f(value.X / _sprite.Scale.X, value.Y / _sprite.Scale.Y);
-                _text.Scale = value;
-            }
-        }
-        public string DisplayText => _text.DisplayedString;
-
-
+        public delegate void ClickEventHandler();
+        public event ClickEventHandler OnClick;
         public Button(string text)
         {
             _text = new Text(text, ButtonSettings.DefaultFont, ButtonSettings.TextSize);
@@ -39,10 +25,10 @@ namespace Collective_learning.GUI.BasicControllers
             FloatRect tmpFR = _text.GetGlobalBounds();
             _shape = new RectangleShape();
             _shape.FillColor = ButtonSettings.ShapeColor;
-            _shape.Size = new Vector2f(tmpFR.Width + ButtonSettings.TextWidthMargin * 2, ButtonSettings.TextHeightMargin * 2);
+            _shape.Size = new Vector2f(tmpFR.Width + ButtonSettings.TextWidthMargin * 2f, ButtonSettings.TextHeightMargin * 2f);
             _shape.Position = position;
 
-            _text.Position = new Vector2f(ButtonSettings.TextWidthMargin, ButtonSettings.TextHeightMargin - tmpFR.Height / 2);
+            _text.Position = new Vector2f(ButtonSettings.TextWidthMargin, (_shape.Size.Y - ButtonSettings.TextHeightMargin) / 2f);
 
             _shape.OutlineColor = ButtonSettings.ShapeOutlineColor;
             _shape.OutlineThickness = 1;
@@ -75,19 +61,13 @@ namespace Collective_learning.GUI.BasicControllers
 
         }
 
-        public override void OnClick(RenderWindow window, MouseButtonEventArgs args)
+        public override void ProcessClick(MouseButtonEventArgs args)
         {
-            Vector2f arg = window.MapPixelToCoords(new Vector2i(args.X, args.Y));
-            if (_sprite.GetGlobalBounds().Contains(arg.X, arg.Y))
+            if (_shape.GetGlobalBounds().Contains(args.X, args.Y))
             {
-                if (_sprite.Texture.Equals(ButtonSettings.Texture))
-                    _sprite.Texture = ButtonSettings.TextureOver;
-                else
-                {
-                    _sprite.Texture = ButtonSettings.Texture;
-                }
+                _sprite.Texture = _sprite.Texture.Equals(ButtonSettings.Texture) ? ButtonSettings.TextureOver : ButtonSettings.Texture;
+                OnClick?.Invoke();
             }
-
         }
 
         public override FloatRect GetLocalBound()

@@ -113,6 +113,11 @@ namespace SFML.Graphics
             return new Vector2f(myRadius + x, myRadius + y);
         }
 
+        public bool Contains(Vector2f point)
+        {
+            return (point.X - Position.X)*(point.X - Position.X) + (point.Y - Position.Y)*(point.Y - Position.Y) < Radius*Radius;
+        }
+
         private float myRadius;
         private uint myPointCount;
     }

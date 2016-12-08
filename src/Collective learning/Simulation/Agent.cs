@@ -14,6 +14,7 @@ namespace Collective_learning.Simulation
 
         private Vector2f _movementDirection = new Vector2f(0, 0);
         private MapField _nextField;
+        private bool _selected;
 
         public MapField CurrentField { get; private set; }
         public MapField TargetField { get; private set; }
@@ -38,6 +39,17 @@ namespace Collective_learning.Simulation
         public Queue<MapField> Path { get; private set; } = new Queue<MapField>();
         public IKnowledge Knowledge { get; } = new Knowledge();
         public Vector2f Position => _circleShape.Position;
+        public CircleShape Bounds => _circleShape;
+
+        public bool Selected
+        {
+            get { return _selected; }
+            set
+            {
+                _selected = value;
+                _circleShape.FillColor = _selected ? SimulationOptions.SelectedAgentColor : SimulationOptions.AgentColor;
+            }
+        }
 
         public Agent(Map map)
         {

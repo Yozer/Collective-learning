@@ -6,7 +6,7 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 1;
+        public int AgentsCount { get; } = 2;
 
         public static float AgentSpeed
         {
@@ -19,6 +19,7 @@ namespace Collective_learning.Simulation
 
         public const float AgentRadius = 9;
         public static readonly Color AgentColor = new Color(99, 60, 5); // brown
+        public static readonly Color SelectedAgentColor = new Color(166, 103, 8); // light brown
 
         public const float FieldWidth = 38;
         public const float FieldHeight = 38;

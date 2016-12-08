@@ -107,6 +107,29 @@ namespace SFML.Graphics
             set { sfView_setViewport(CPointer, value); }
         }
 
+        public Transform Transform
+        {
+            get
+            {
+                float angle = Rotation * 3.141592654f / 180f;
+                float cosine = (float) Math.Cos(angle);
+                float sine= (float) Math.Sin(angle);
+                float tx = -Center.X * cosine - Center.Y * sine + Center.X;
+                float ty = Center.X * sine - Center.Y * cosine + Center.Y;
+
+                // Projection components
+                float a = 2f / Size.X;
+                float b = -2f / Size.Y;
+                float c = -a * Center.X;
+                float d = -b * Center.Y;
+
+                // Rebuild the projection matrix
+                return new Transform(a * cosine, a * sine, a * tx + c,
+                                        -b * sine, b * cosine, b * ty + d,
+                                         0f, 0f, 1f);
+            }
+        }
+
         ////////////////////////////////////////////////////////////
         /// <summary>
         /// Rebuild the view from a rectangle

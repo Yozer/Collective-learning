@@ -91,13 +91,18 @@ namespace Collective_learning
             KeyPressed += OnKeyPressed;
             Resized += OnResized;
             MouseButtonPressed += _panel.ProcessClick;
+            MouseButtonPressed += (sender, args) =>
+            {
+                if (!_panel.GetGlobalBounds().Contains(args.X, args.Y))
+                    _simulation.ProcessClick(new Vector2f(args.X + _simulationView.Center.X - WindowWidth/2f, args.Y + _simulationView.Center.Y - WindowHeight/2f));
+            };
 
             MouseWheelScrolled += Scroll;
         }
 
         private void Scroll(object sender, MouseWheelScrollEventArgs args)
         {
-            _simulationView.Zoom(args.Delta > 0 ? 1.1f : 0.9f);
+            _simulationView.Zoom(args.Delta < 0 ? 1.1f : 0.9f);
         }
 
         private void OnResized(object sender, SizeEventArgs sizeEventArgs)
@@ -119,7 +124,7 @@ namespace Collective_learning
                 if (_lastDragPoint != default(Vector2i))
                 {
                     var offset = _lastDragPoint - mousePosition;
-                    _simulationView.Move(new Vector2f(offset.X, offset.Y));
+                    _simulationView.Move(new Vector2f(offset.X, offset.Y)*(_simulationView.Size.Y/WindowHeight));
 
                 }
                 _lastDragPoint = Mouse.GetPosition(this);

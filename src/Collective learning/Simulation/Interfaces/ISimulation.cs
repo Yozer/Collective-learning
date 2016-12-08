@@ -1,4 +1,6 @@
 ﻿using SFML.Graphics;
+using SFML.System;
+using SFML.Window;
 
 namespace Collective_learning.Simulation.Interfaces
 {
@@ -9,5 +11,6 @@ namespace Collective_learning.Simulation.Interfaces
         float Height { get; }
         SimulationStatistics SimulationStatistics { get; }
         bool Paused { get; set; }
+        void ProcessClick(Vector2f point);
     }
 }

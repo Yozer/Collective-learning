@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
+using SFML.System;
+using SFML.Window;
 
 namespace Collective_learning.Simulation
 {
@@ -11,6 +13,8 @@ namespace Collective_learning.Simulation
         private readonly Map _map;
         private readonly SimulationOptions _options;
         private readonly List<IAgent> _agents = new List<IAgent>();
+        private IAgent _selectedAgent = null;
+
         public float Width => _map.Width*SimulationOptions.FieldWidth;
         public float Height => _map.Height*SimulationOptions.FieldHeight;
         public SimulationStatistics SimulationStatistics { get; set; } = new SimulationStatistics();
@@ -49,23 +53,48 @@ namespace Collective_learning.Simulation
             SimulationStatistics.DangerCount = SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = 0;
 
             foreach (var mapField in _map.Fields)
-            {
                 mapField.SpecialColor = default(Color);
-            }
 
             foreach (IAgent agent in _agents)
             {
                 agent.Update(delta);
-                if (agent.TargetField != null)
-                    agent.TargetField.SpecialColor = Color.Yellow;
-                foreach (var knownField in agent.Knowledge.KnownFields)
+                if (_selectedAgent == null || agent == _selectedAgent)
                 {
-                    _map.Fields[knownField.X, knownField.Y].Darker = true;
-                }
+                    if (agent.TargetField != null)
+                        agent.TargetField.SpecialColor = Color.Yellow;
+                    foreach (var knownField in agent.Knowledge.KnownFields)
+                        _map.Fields[knownField.X, knownField.Y].Darker = true;
 
-                SimulationStatistics.DangerCount += agent.Knowledge.Negative.Count;
-                SimulationStatistics.FoodCount += agent.Knowledge.Positive.Count(t => t.Type == FieldType.Food);
-                SimulationStatistics.WaterCount += agent.Knowledge.Positive.Count - SimulationStatistics.FoodCount;
+                    SimulationStatistics.DangerCount += agent.Knowledge.Negative.Count;
+                    SimulationStatistics.FoodCount += agent.Knowledge.Positive.Count(t => t.Type == FieldType.Food);
+                    SimulationStatistics.WaterCount += agent.Knowledge.Positive.Count - SimulationStatistics.FoodCount;
+                }
+            }
+        }
+
+        public void ProcessClick(Vector2f point)
+        {
+            IAgent clickedAgent = _agents.FirstOrDefault(t => t.Bounds.Contains(point));
+            if (_selectedAgent != null)
+            {
+                _selectedAgent.Selected = false;
+                _selectedAgent = null;
+            }
+            if (clickedAgent != null)
+            {
+                clickedAgent.Selected = true;
+                _selectedAgent = clickedAgent;
+
+                SimulationStatistics.DangerCount = clickedAgent.Knowledge.Negative.Count;
+                SimulationStatistics.FoodCount = clickedAgent.Knowledge.Positive.Count(t => t.Type == FieldType.Food);
+                SimulationStatistics.WaterCount = clickedAgent.Knowledge.Positive.Count - SimulationStatistics.FoodCount;
+
+                foreach (var mapField in _map.Fields)
+                    mapField.SpecialColor = default(Color);
+                if (_selectedAgent.TargetField != null)
+                    _selectedAgent.TargetField.SpecialColor = Color.Yellow;
+                foreach (var knownField in _selectedAgent.Knowledge.KnownFields)
+                    _map.Fields[knownField.X, knownField.Y].Darker = true;
             }
         }
     }

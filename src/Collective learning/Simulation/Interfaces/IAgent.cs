@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using SFML.Graphics;
 
 namespace Collective_learning.Simulation.Interfaces
@@ -10,5 +8,7 @@ namespace Collective_learning.Simulation.Interfaces
         void Update(float delta);
         MapField TargetField { get; }
         IKnowledge Knowledge { get; }
+        bool Selected { get; set; }
+        CircleShape Bounds { get; }
     }
 }

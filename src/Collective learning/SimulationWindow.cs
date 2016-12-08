@@ -20,8 +20,7 @@ namespace Collective_learning
         private const uint WindowHeight = 768u;
 
         private Vector2i _lastDragPoint;
-        private bool _paused = false;
-
+        
         internal static SimulationWindow Create(ISimulation simulation)
         {
             var contextSettings = new ContextSettings
@@ -71,9 +70,14 @@ namespace Collective_learning
             _panel.AddBox(box);
         }
 
+        private void UpdateStatistics()
+        {
+            _panel.SimulationStatistics = _simulation.SimulationStatistics;
+        }
+
         private void PausedClicked()
         {
-            _paused = !_paused;
+            _simulation.Paused = !_simulation.Paused;
         }
 
         private void UpdateSimulationSpeed(float value)
@@ -127,9 +131,6 @@ namespace Collective_learning
         }
         internal void Update(float delta)
         {
-            if(_paused)
-                return;
-
             var mousePoint = Mouse.GetPosition(this);
             if (HasFocus())
             {
@@ -140,6 +141,7 @@ namespace Collective_learning
             }
 
             _simulation.Update(delta);
+            UpdateStatistics();
         }
         internal void Draw()
         {

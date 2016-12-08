@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
 
@@ -11,7 +13,8 @@ namespace Collective_learning.Simulation
         private readonly List<IAgent> _agents = new List<IAgent>();
         public float Width => _map.Width*SimulationOptions.FieldWidth;
         public float Height => _map.Height*SimulationOptions.FieldHeight;
-        public bool Paused { get; set; }
+        public SimulationStatistics SimulationStatistics { get; set; } = new SimulationStatistics();
+        public bool Paused { get; set; } = true;
 
         public Simulation(Map map, SimulationOptions options)
         {
@@ -41,6 +44,10 @@ namespace Collective_learning.Simulation
             if(Paused)
                 return;
 
+            SimulationStatistics.SimulationTime = SimulationStatistics.SimulationTime.Add(TimeSpan.FromSeconds(delta));
+            SimulationStatistics.PopulationCount = _agents.Count;
+            SimulationStatistics.DangerCount = SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = 0;
+
             foreach (var mapField in _map.Fields)
             {
                 mapField.SpecialColor = default(Color);
@@ -55,9 +62,11 @@ namespace Collective_learning.Simulation
                 {
                     _map.Fields[knownField.X, knownField.Y].Darker = true;
                 }
+
+                SimulationStatistics.DangerCount += agent.Knowledge.Negative.Count;
+                SimulationStatistics.FoodCount += agent.Knowledge.Positive.Count(t => t.Type == FieldType.Food);
+                SimulationStatistics.WaterCount += agent.Knowledge.Positive.Count - SimulationStatistics.FoodCount;
             }
         }
-
-
     }
 }

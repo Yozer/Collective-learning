@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
@@ -70,6 +69,13 @@ namespace Collective_learning.Simulation
 
         private void ChooseTarget()
         {
+            // go to start field after reaching target
+            if (CurrentField != _map.StartField && TargetField != _map.StartField)
+            {
+                TargetField = _map.StartField;
+                return;
+            }
+
             // if we don't know any positive fields or we want to explore
             MapField fieldToExplore;
             if ((Knowledge.Positive.All(t => t == CurrentField) || SimulationOptions.Random.NextDouble() <= SimulationOptions.ExplorationThreshold)

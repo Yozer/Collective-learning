@@ -47,7 +47,7 @@ namespace SFML.Graphics
         /// The size of the rectangle
         /// </summary>
         ////////////////////////////////////////////////////////////
-        public Vector2f Size
+        public virtual Vector2f Size
         {
             get { return mySize; }
             set { mySize = value; Update(); }

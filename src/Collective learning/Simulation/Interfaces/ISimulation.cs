@@ -7,5 +7,7 @@ namespace Collective_learning.Simulation.Interfaces
         void Update(float delta);
         float Width { get; }
         float Height { get; }
+        SimulationStatistics SimulationStatistics { get; }
+        bool Paused { get; set; }
     }
 }

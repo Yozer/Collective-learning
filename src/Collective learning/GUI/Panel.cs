@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Collective_learning.GUI.BasicControllers;
@@ -49,9 +49,9 @@ namespace Collective_learning.GUI
         }
         private void UpdateStatisticsString()
         {
-            _statisticsText.DisplayedString = $"Po¿ywienie: {SimulationStatistics.FoodCount}\nWoda: {SimulationStatistics.WaterCount}\n" +
-                                              $"Zagro¿enia: {SimulationStatistics.DangerCount}\nCzas symulacji: {SimulationStatistics.SimulationTime:mm\\:ss\\:fff}\n" +
-                                              $"Liczebnoœæ populacji: {SimulationStatistics.PopulationCount}\n";
+            _statisticsText.DisplayedString = $"PoÅ¼ywienie: {SimulationStatistics.FoodCount}\nWoda: {SimulationStatistics.WaterCount}\n" +
+                                              $"ZagroÅ¼enia: {SimulationStatistics.DangerCount}\nCzas symulacji: {SimulationStatistics.SimulationTime:mm\\:ss\\:fff}\n" +
+                                              $"LiczebnoÅ›Ä‡ populacji: {SimulationStatistics.PopulationCount}\n";
         }
 
         public void AddBox(Box box)

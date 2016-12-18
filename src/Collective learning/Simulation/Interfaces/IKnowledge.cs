@@ -3,7 +3,7 @@ using SFML.System;
 
 namespace Collective_learning.Simulation.Interfaces
 {
-    interface IKnowledge
+    public interface IKnowledge
     {
         ISet<MapField> Positive { get; }
         ISet<MapField> Negative { get; }

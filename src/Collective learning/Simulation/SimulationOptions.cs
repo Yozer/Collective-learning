@@ -6,7 +6,7 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 20;
+        public int AgentsCount { get; } = 50;
 
         public static float AgentSpeed
         {
@@ -14,7 +14,7 @@ namespace Collective_learning.Simulation
             set { _agentSpeed = value*1.5f*FieldWidth; }
         }
 
-        public static float ExplorationThreshold = 0.9f;
+        public static float ExplorationThreshold = 0.0f;
 
 
         public const float AgentRadius = 9;

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
 using SFML.System;
 
@@ -88,7 +89,7 @@ namespace Collective_learning.Simulation
             }
         }
 
-        public void Consume()
+        public void Consume(IAgent agent)
         {
             if (Type != FieldType.Food && Type != FieldType.Water)
                 return;
@@ -96,8 +97,17 @@ namespace Collective_learning.Simulation
             --_resourceCount;
             _text.DisplayedString = _resourceCount.ToString();
 
-            if(_resourceCount == 0)
+            if (Type == FieldType.Food)
+                ++agent.Statistics.FoodCount;
+            else if (Type == FieldType.Water)
+                ++agent.Statistics.WaterCount;
+            else if (Type == FieldType.Danger)
+                ++agent.Statistics.DangerCount;
+
+            if (_resourceCount == 0)
                 Type = FieldType.Empty;
+
+            return;
         }
 
         public void Dispose()

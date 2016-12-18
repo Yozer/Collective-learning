@@ -162,11 +162,16 @@ namespace Collective_learning.Simulation
 
                     if (CurrentField == TargetField)
                     {
-                        TargetField.Consume();
+                        TargetField.Consume(this);
                         TargetField = null;
                     }
                 }
             }
+        }
+
+        private void ConsumeField(MapField mapField)
+        {
+
         }
 
         protected void UpdateKnowledge(MapField newField)
@@ -183,20 +188,11 @@ namespace Collective_learning.Simulation
             }
 
             if (newField.Type == FieldType.Food)
-            {
                 Knowledge.Positive.Add(newField);
-                ++Statistics.FoodCount;
-            }
             else if (newField.Type == FieldType.Water)
-            {
                 Knowledge.Positive.Add(newField);
-                ++Statistics.WaterCount;
-            }
             else if (newField.Type == FieldType.Danger)
-            {
                 Knowledge.Negative.Add(newField);
-                ++Statistics.DangerCount;
-            }
             else if (newField.Type == FieldType.Blocked)
                 Knowledge.Blocked.Add(newField);
         }

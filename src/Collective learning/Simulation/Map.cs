@@ -168,14 +168,10 @@ namespace Collective_learning.Simulation
         {
             var list = new List<Vector2i>(8)
             {
-                new Vector2i(field.X - 1, field.Y - 1),
                 new Vector2i(field.X - 1, field.Y),
-                new Vector2i(field.X - 1, field.Y + 1),
                 new Vector2i(field.X, field.Y - 1),
                 new Vector2i(field.X, field.Y + 1),
-                new Vector2i(field.X + 1, field.Y - 1),
                 new Vector2i(field.X + 1, field.Y),
-                new Vector2i(field.X + 1, field.Y + 1),
             };
 
             var result = list

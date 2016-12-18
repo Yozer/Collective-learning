@@ -97,13 +97,21 @@ namespace Collective_learning.Simulation
             else
             {
                 // just visit something positive, that is close to me
-                TargetField = Knowledge.Positive.Where(t => t != CurrentField).MinBy(t => _map.FindPath(CurrentField, t, Knowledge).Count);
+                TargetField = Knowledge.Positive.Where(t => t != CurrentField).MinBy(t => _map.FindPath(CurrentField, t, Knowledge)?.Count ?? int.MaxValue);
             }
         }
 
         private void InvalidatePathToTarget()
         {
             Path = _map.FindPath(CurrentField, TargetField, Knowledge);
+            if (Path == null)
+            {
+                // we know entire neighborhood of this place and we still were unable to find a path thus we cannot reach that place.
+                Knowledge.KnownFields.Add(TargetField);
+                Knowledge.Blocked.Add(TargetField);
+                ChooseTarget();
+                InvalidatePathToTarget();
+            }
         }
 
         private void Move(float delta)

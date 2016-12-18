@@ -72,20 +72,22 @@ namespace Collective_learning.Simulation
 
         private class NodeComparer : IComparer<MapField>
         {
-            public int Compare(MapField x, MapField y)
+            public int Compare(MapField a, MapField b)
             {
                 int result = 0;
-                if((x.isOpenSet && y.isOpenSet) || (!x.isOpenSet && !y.isOpenSet))
-                    result = x.fScore.CompareTo(y.fScore);
-                else if (x.isOpenSet && !y.isOpenSet)
+                if (!(a.isOpenSet ^ b.isOpenSet))
+                    result = a.fScore < b.fScore ? -1 : a.fScore == b.fScore ? 0 : 1;
+                else if (a.isOpenSet)
                     return -1;
-                else if (!x.isOpenSet && y.isOpenSet)
+                else
                     return 1;
 
                 if (result == 0)
-                    result = x.X.CompareTo(y.X);
-                if (result == 0)
-                    result = x.Y.CompareTo(y.Y);
+                {
+                    result = a._x < b._x ? -1 : a._x == b._x ? 0 : 1;
+                    if (result == 0)
+                        result = a._y < b._y ? -1 : a._y == b._y ? 0 : 1;
+                }
 
                 return result;
             }

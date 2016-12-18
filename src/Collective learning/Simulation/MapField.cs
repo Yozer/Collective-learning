@@ -10,7 +10,7 @@ namespace Collective_learning.Simulation
     {
         private static readonly Font MyFont = new Font(new Font(Path.Combine("Assets", "Arial.ttf")));
 
-        private int _x, _y;
+        internal int _x, _y;
         private FieldType _type;
 
         private readonly RectangleShape _rectangle;
@@ -58,7 +58,7 @@ namespace Collective_learning.Simulation
 
         public Color SpecialColor
         {
-            set { _rectangle.FillColor = value == default(Color) ? SimulationOptions.FieldColors[_type] : value; _darker = false; }
+            set { _rectangle.FillColor = value == default(Color) ? SimulationOptions.FieldColors[_type] : value; Darker = _darker; }
         }
 
         public bool Darker

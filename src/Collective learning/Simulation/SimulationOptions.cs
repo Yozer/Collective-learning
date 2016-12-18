@@ -6,7 +6,7 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 1;
+        public int AgentsCount { get; } = 200;
 
         public static float AgentSpeed
         {

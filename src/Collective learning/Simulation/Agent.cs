@@ -39,7 +39,7 @@ namespace Collective_learning.Simulation
         }
 
         public Queue<MapField> Path { get; private set; } = new Queue<MapField>();
-        public IKnowledge Knowledge { get; } = new Knowledge();
+        public IKnowledge Knowledge { get; }
         public Vector2f Position => _circleShape.Position;
         public CircleShape Bounds => _circleShape;
         public SimulationStatistics Statistics { get; } = new SimulationStatistics();
@@ -55,7 +55,7 @@ namespace Collective_learning.Simulation
             }
         }
 
-        public Agent(Map map)
+        public Agent(Map map, Knowledge globalKnowledge)
         {
             _map = map;
             CurrentField = map.StartField;
@@ -65,6 +65,7 @@ namespace Collective_learning.Simulation
             _circleShape.OutlineThickness = 1.0f;
             _circleShape.OutlineColor = Color.Black;
 
+            Knowledge = globalKnowledge ?? new Knowledge();
             Knowledge.KnownFields.Add(map.StartField);
             Id = _internalId++;
         }

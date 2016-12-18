@@ -89,10 +89,10 @@ namespace Collective_learning.Simulation
             }
         }
 
-        public void Consume(IAgent agent)
+        public bool Consume(IAgent agent)
         {
             if (Type != FieldType.Food && Type != FieldType.Water)
-                return;
+                return false;
 
             --_resourceCount;
             _text.DisplayedString = _resourceCount.ToString();
@@ -107,7 +107,7 @@ namespace Collective_learning.Simulation
             if (_resourceCount == 0)
                 Type = FieldType.Empty;
 
-            return;
+            return true;
         }
 
         public void Dispose()

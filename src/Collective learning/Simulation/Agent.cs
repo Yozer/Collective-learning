@@ -82,13 +82,6 @@ namespace Collective_learning.Simulation
 
         private void ChooseTarget()
         {
-            // go to start field after reaching target
-            if (CurrentField != _map.StartField && TargetField != _map.StartField)
-            {
-                TargetField = _map.StartField;
-                return;
-            }
-
             // if we don't know any positive fields or we want to explore
             MapField fieldToExplore;
             if ((Knowledge.Positive.All(t => t == CurrentField) || SimulationOptions.Random.NextDouble() <= SimulationOptions.ExplorationThreshold)
@@ -162,16 +155,24 @@ namespace Collective_learning.Simulation
 
                     if (CurrentField == TargetField)
                     {
-                        TargetField.Consume(this);
-                        TargetField = null;
+                        OnTargetReached();
                     }
                 }
             }
         }
 
-        private void ConsumeField(MapField mapField)
+        private void OnTargetReached()
         {
-
+            if (TargetField.Consume(this))
+            {
+                // we just consumed water/food. Take it base to our camp
+                TargetField = _map.StartField;
+            }
+            else
+            {
+                // we didn't collected anything, let's call ChooseTarget later
+                TargetField = null;
+            }
         }
 
         protected void UpdateKnowledge(MapField newField)

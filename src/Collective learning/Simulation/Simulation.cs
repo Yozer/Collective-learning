@@ -26,6 +26,9 @@ namespace Collective_learning.Simulation
             _options = options;
 
             InitAgents();
+
+            SimulationStatistics.AllFieldsCount = _map.Fields.Length;
+            SimulationStatistics.PopulationCount = _agents.Count;
         }
 
         private void InitAgents()
@@ -76,8 +79,8 @@ namespace Collective_learning.Simulation
             foreach (var mapField in _map.Fields)
                 mapField.SpecialColor = default(Color);
 
-            SimulationStatistics.PopulationCount = _agents.Count;
             SimulationStatistics.DangerCount = SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = 0;
+            var totalVisitedFields = new HashSet<MapField>();
 
             foreach (var agent in _agents)
             {
@@ -86,16 +89,18 @@ namespace Collective_learning.Simulation
                     if (agent.TargetField != null)
                         agent.TargetField.SpecialColor = Color.Yellow;
                     foreach (var knownField in agent.Knowledge.KnownFields)
+                    {
                         _map.Fields[knownField.X, knownField.Y].Darker = true;
+                        totalVisitedFields.Add(knownField);
+                    }
 
-                    SimulationStatistics.DangerCount += agent.Knowledge.Negative.Count;
-                    SimulationStatistics.FoodCount += agent.Knowledge.Positive.Count(t => t.Type == FieldType.Food);
-                    SimulationStatistics.WaterCount += agent.Knowledge.Positive.Count;
+                    SimulationStatistics.DangerCount += agent.Statistics.DangerCount;
+                    SimulationStatistics.FoodCount += agent.Statistics.FoodCount;
+                    SimulationStatistics.WaterCount += agent.Statistics.WaterCount;
                 }
             }
 
-            SimulationStatistics.WaterCount -= SimulationStatistics.FoodCount;
-            SimulationStatistics.DiscoveredCount = _map.Fields.Cast<MapField>().Count(t => t.Darker);
+            SimulationStatistics.DiscoveredCount = totalVisitedFields.Count;
         }
     }
 }

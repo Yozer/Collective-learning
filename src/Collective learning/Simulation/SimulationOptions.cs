@@ -6,7 +6,7 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 2;
+        public int AgentsCount { get; } = 20;
 
         public static float AgentSpeed
         {
@@ -23,6 +23,7 @@ namespace Collective_learning.Simulation
 
         public const float FieldWidth = 38;
         public const float FieldHeight = 38;
+        public const int ResourceCount = 5;
 
         public static readonly Dictionary<char, FieldType> FieldTypes = new Dictionary<char, FieldType>
         {

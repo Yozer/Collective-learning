@@ -40,6 +40,7 @@ namespace Collective_learning.Simulation
         public IKnowledge Knowledge { get; } = new Knowledge();
         public Vector2f Position => _circleShape.Position;
         public CircleShape Bounds => _circleShape;
+        public SimulationStatistics Statistics { get; } = new SimulationStatistics();
 
         public bool Selected
         {
@@ -95,11 +96,15 @@ namespace Collective_learning.Simulation
             {
                 TargetField = fieldToExplore;
             }
+            else if (Knowledge.Positive.Count == 0)
+            {
+                var list = Knowledge.KnownFields.Where(t => t.Type != FieldType.Danger && t != CurrentField && t.Type != FieldType.Blocked).ToList();
+                TargetField = list[SimulationOptions.Random.Next(0, list.Count)];
+            }
             else
             {
                 // just visit something positive, that is close to me
                 TargetField = Knowledge.Positive.Where(t => t != CurrentField).MinBy(t => _map.FindPath(CurrentField, t, Knowledge).Count);
-                //TargetField = otherPositiveFields[SimulationOptions.Random.Next(0, otherPositiveFields.Count)];
             }
         }
 
@@ -126,10 +131,10 @@ namespace Collective_learning.Simulation
                 if (NextField != null)
                 {
                     // update knowledge
-                    UpdateKnowledge(NextField);
                     // check if we can move there
                     if (NextField.Type == FieldType.Blocked)
                     {
+                        UpdateKnowledge(NextField);
                         // if that was our target, choose new one
                         if (TargetField == NextField)
                         {
@@ -153,19 +158,45 @@ namespace Collective_learning.Simulation
                     _circleShape.Position = NextField.Center;
                     CurrentField = NextField;
                     NextField = null;
+                    UpdateKnowledge(CurrentField);
+
                     if (CurrentField == TargetField)
+                    {
+                        TargetField.Consume();
                         TargetField = null;
+                    }
                 }
             }
         }
 
         protected void UpdateKnowledge(MapField newField)
         {
-            Knowledge.KnownFields.Add(newField);
-            if (newField.Type == FieldType.Food || newField.Type == FieldType.Water)
+            if (Knowledge.KnownFields.Contains(newField))
+            {
+                Knowledge.Positive.Remove(newField);
+                Knowledge.Negative.Remove(newField);
+                Knowledge.Blocked.Remove(newField);
+            }
+            else
+            {
+                Knowledge.KnownFields.Add(newField);
+            }
+
+            if (newField.Type == FieldType.Food)
+            {
                 Knowledge.Positive.Add(newField);
+                ++Statistics.FoodCount;
+            }
+            else if (newField.Type == FieldType.Water)
+            {
+                Knowledge.Positive.Add(newField);
+                ++Statistics.WaterCount;
+            }
             else if (newField.Type == FieldType.Danger)
+            {
                 Knowledge.Negative.Add(newField);
+                ++Statistics.DangerCount;
+            }
             else if (newField.Type == FieldType.Blocked)
                 Knowledge.Blocked.Add(newField);
         }

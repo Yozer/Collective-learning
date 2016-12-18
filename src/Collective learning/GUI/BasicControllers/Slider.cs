@@ -14,6 +14,7 @@ namespace Collective_learning.GUI.BasicControllers
         private readonly RectangleShape _bar;
         private readonly float _valueFrom;
         private readonly float _valueTo;
+        private readonly string _format;
 
         private Vector2f _position;
         private Vector2i _lastDragPoint;
@@ -22,10 +23,11 @@ namespace Collective_learning.GUI.BasicControllers
 
         public event ChangedEventHandler OnChange;
 
-        public Slider(string text, float fromV, float toV, float initValue)
+        public Slider(string text, float fromV, float toV, float initValue, string format)
         {
             _valueFrom = fromV;
             _valueTo = toV;
+            _format = format;
             _position = new Vector2f(0, 0);
 
             _text = new Text(text, SliderSettings.DefaultFont, SliderSettings.TextSize)
@@ -34,7 +36,7 @@ namespace Collective_learning.GUI.BasicControllers
                 Style = SliderSettings.TextStyle
             };
 
-            _valueText = new Text(initValue.ToString("0.000"), SliderSettings.DefaultFont, SliderSettings.TextSize)
+            _valueText = new Text(initValue.ToString(_format), SliderSettings.DefaultFont, SliderSettings.TextSize)
             {
                 Color = SliderSettings.TextColor,
                 Style = SliderSettings.TextStyle
@@ -50,7 +52,7 @@ namespace Collective_learning.GUI.BasicControllers
                 OutlineColor = Color.Black,
                 OutlineThickness = 1,
                 Size = new Vector2f(SliderSettings.BarWidth, SliderSettings.BarHeight),
-                Position = new Vector2f(SliderSettings.TextSize + valueFr.Width, SliderSettings.TextHeightMargin + SliderSettings.BarHeight)
+                Position = new Vector2f(SliderSettings.TextSize + 50, SliderSettings.TextHeightMargin + SliderSettings.BarHeight)
             };
 
             _scroll = new RectangleShape
@@ -81,7 +83,7 @@ namespace Collective_learning.GUI.BasicControllers
 
             float percentage = (actual - from)/(to - from);
             float value = (_valueTo - _valueFrom)*percentage + _valueFrom;
-            _valueText.DisplayedString = value.ToString("0.000");
+            _valueText.DisplayedString = value.ToString(_format);
 
             OnChange?.Invoke(value);
         }

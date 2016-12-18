@@ -42,12 +42,12 @@ namespace Collective_learning
             SetActive();
 
             _simulationView = new View(new FloatRect(0, 0, WindowWidth, WindowHeight));
-            _simulationView.Move(new Vector2f(-WindowWidth/4f - (WindowWidth * 3/4f - simulation.Width) / 2, -(WindowHeight - simulation.Height) / 2));
+            _simulationView.Move(new Vector2f(-WindowWidth/5f - (WindowWidth * 4/5f - simulation.Width) / 2, -(WindowHeight - simulation.Height) / 2));
 
             _panel = new Panel
             {
                 Position = new Vector2f(0, 0),
-                Size = new Vector2f(WindowWidth/4f, WindowHeight)
+                Size = new Vector2f(WindowWidth/5f, WindowHeight)
             };
             InitGui();
             CreateEventHandlers();
@@ -56,10 +56,10 @@ namespace Collective_learning
         private void InitGui()
         {
             Box box = new Box();
-            var slider = new Slider("Szybkość symulacji", 0.1f, 400f, 3);
+            var slider = new Slider("Szybkość symulacji", 0.1f, 1000f, 3, "0");
             slider.OnChange += value => SimulationOptions.AgentSpeed = value;
             box.AddController(slider);
-            slider = new Slider("Exploration threshold", 0.0f, 1f, SimulationOptions.ExplorationThreshold);
+            slider = new Slider("Exploration threshold", 0.0f, 1f, SimulationOptions.ExplorationThreshold, "0.000");
             slider.OnChange += value => SimulationOptions.ExplorationThreshold = value;
             box.AddController(slider);
 

@@ -10,5 +10,6 @@ namespace Collective_learning.Simulation.Interfaces
         IKnowledge Knowledge { get; }
         bool Selected { get; set; }
         CircleShape Bounds { get; }
+        SimulationStatistics Statistics { get; }
     }
 }

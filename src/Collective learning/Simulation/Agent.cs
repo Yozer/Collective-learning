@@ -201,7 +201,10 @@ namespace Collective_learning.Simulation
             else if (newField.Type == FieldType.Water)
                 Knowledge.Positive.Add(newField);
             else if (newField.Type == FieldType.Danger)
+            {
                 Knowledge.Negative.Add(newField);
+                ++Statistics.DangerCount;
+            }
             else if (newField.Type == FieldType.Blocked)
                 Knowledge.Blocked.Add(newField);
         }

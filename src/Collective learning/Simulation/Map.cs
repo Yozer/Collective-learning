@@ -161,7 +161,8 @@ namespace Collective_learning.Simulation
 
         private float Distance(MapField a, MapField b)
         {
-            return (float) Math.Sqrt((a.X - b.X)*(a.X - b.X) + (a.Y - b.Y)*(a.Y - b.Y));
+            //return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
+            return (float)Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
         }
 
         private List<MapField> GetNeighbors(MapField field, IKnowledge knowledge)

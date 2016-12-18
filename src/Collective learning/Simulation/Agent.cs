@@ -9,6 +9,8 @@ namespace Collective_learning.Simulation
 {
     internal class Agent : IAgent
     {
+        private static int _internalId = 0;
+
         private readonly Map _map;
         private readonly CircleShape _circleShape = new CircleShape(SimulationOptions.AgentRadius);
 
@@ -41,6 +43,7 @@ namespace Collective_learning.Simulation
         public Vector2f Position => _circleShape.Position;
         public CircleShape Bounds => _circleShape;
         public SimulationStatistics Statistics { get; } = new SimulationStatistics();
+        public int Id { get; }
 
         public bool Selected
         {
@@ -63,6 +66,7 @@ namespace Collective_learning.Simulation
             _circleShape.OutlineColor = Color.Black;
 
             Knowledge.KnownFields.Add(map.StartField);
+            Id = _internalId++;
         }
         public void Draw(RenderTarget target, RenderStates states)
         {
@@ -97,7 +101,8 @@ namespace Collective_learning.Simulation
             else
             {
                 // just visit something positive, that is close to me
-                TargetField = Knowledge.Positive.Where(t => t != CurrentField).MinBy(t => _map.FindPath(CurrentField, t, Knowledge)?.Count ?? int.MaxValue);
+                //TargetField = Knowledge.Positive.Where(t => t != CurrentField).MinBy(t => _map.FindPath(CurrentField, t, Knowledge)?.Count ?? int.MaxValue);
+                TargetField = Knowledge.Positive.Where(t => t != CurrentField).MinBy(t => Math.Sqrt((t.X-CurrentField.X)*(t.X-CurrentField.X)+(t.Y-CurrentField.Y)*(t.Y-CurrentField.Y)));
             }
         }
 
@@ -196,9 +201,7 @@ namespace Collective_learning.Simulation
                 Knowledge.KnownFields.Add(newField);
             }
 
-            if (newField.Type == FieldType.Food)
-                Knowledge.Positive.Add(newField);
-            else if (newField.Type == FieldType.Water)
+            if (newField.Type == FieldType.Food || newField.Type == FieldType.Water)
                 Knowledge.Positive.Add(newField);
             else if (newField.Type == FieldType.Danger)
             {
@@ -216,6 +219,21 @@ namespace Collective_learning.Simulation
                 return null;
 
             return unknown[SimulationOptions.Random.Next(0, unknown.Count)];
+        }
+
+        public bool Equals(IAgent other)
+        {
+            return Id == other.Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals((IAgent)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Collective_learning.Simulation
         }
 
         public static float ExplorationThreshold = 0.2f;
+        public static SharingType KnowledgeSharingType = SharingType.Global;
 
 
         public const float AgentRadius = 9;
@@ -48,5 +49,11 @@ namespace Collective_learning.Simulation
         private static float _agentSpeed = 3*FieldWidth*1.5f;
 
         public static Random Random { get; } = new Random();
+    }
+
+    internal enum SharingType
+    {
+        NoSharing,
+        Global
     }
 }

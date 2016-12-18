@@ -55,6 +55,48 @@ namespace Collective_learning.Simulation
 
             _agents.ForEach(t => t.Update(delta));
             CalculateStatistics();
+            ShareKnowledge();
+        }
+
+        private void ShareKnowledge()
+        {
+            if (SimulationOptions.KnowledgeSharingType == SharingType.Global)
+                GlobalKnowledgeSharing();
+        }
+
+        private void GlobalKnowledgeSharing()
+        {
+            // everyone knows everyone knowledge
+            foreach (IAgent agent in _agents)
+            {
+                foreach (IAgent shareTo in _agents)
+                {
+                    if(agent.Equals(shareTo))
+                        continue;
+
+                    foreach (var knowledge in agent.Knowledge.Positive)
+                    {
+                        // assume that field can change only from food/water to empty
+                        if (!shareTo.Knowledge.KnownFields.Contains(knowledge))
+                        {
+                            shareTo.Knowledge.Positive.Add(knowledge);
+                        }
+                    }
+
+                    foreach (var knowledge in agent.Knowledge.KnownFields)
+                    {
+                        // share information about dry source of water/food
+                        if (shareTo.Knowledge.Positive.Contains(knowledge) && !agent.Knowledge.Positive.Contains(knowledge))
+                        {
+                            shareTo.Knowledge.Positive.Remove(knowledge);
+                        }
+                    }
+
+                    agent.Knowledge.Negative.ToList().ForEach(t => shareTo.Knowledge.Negative.Add(t));
+                    agent.Knowledge.Blocked.ToList().ForEach(t => shareTo.Knowledge.Blocked.Add(t));
+                    agent.Knowledge.KnownFields.ToList().ForEach(t => shareTo.Knowledge.KnownFields.Add(t));
+                }
+            }
         }
 
         public void ProcessClick(Vector2f point)

@@ -3,7 +3,7 @@ using SFML.Graphics;
 
 namespace Collective_learning.Simulation.Interfaces
 {
-    public interface IAgent : Drawable
+    public interface IAgent : Drawable, IEquatable<IAgent>
     {
         void Update(float delta);
         MapField TargetField { get; }
@@ -11,5 +11,7 @@ namespace Collective_learning.Simulation.Interfaces
         bool Selected { get; set; }
         CircleShape Bounds { get; }
         SimulationStatistics Statistics { get; }
+        int Id { get; }
+
     }
 }

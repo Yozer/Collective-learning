@@ -59,7 +59,7 @@ namespace Collective_learning
             var slider = new Slider("Szybkość symulacji", 0.1f, 40f, 3);
             slider.OnChange += value => SimulationOptions.AgentSpeed = value;
             box.AddController(slider);
-            slider = new Slider("Exploration threshold", 0.0f, 1f, 0.4f);
+            slider = new Slider("Exploration threshold", 0.0f, 1f, SimulationOptions.ExplorationThreshold);
             slider.OnChange += value => SimulationOptions.ExplorationThreshold = value;
             box.AddController(slider);
 

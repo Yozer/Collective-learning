@@ -79,15 +79,22 @@ namespace Collective_learning.Simulation
             var f_score = new Dictionary<MapField, float>();
             var came_from = new Dictionary<MapField, MapField>();
 
+            foreach (MapField field in Fields)
+            {
+                g_score.Add(field, float.MaxValue);
+                f_score.Add(field, float.MaxValue);
+            }
+
             openset.Add(start);
-            g_score.Add(start, 0);
+            g_score[start] = 0;
+            f_score[start] = Distance(start, end);
 
             while (openset.Count > 0)
             {
                 MapField x = openset.First();
                 foreach (MapField field in openset)
                 {
-                    if (f_score.ContainsKey(field) && f_score[field] < f_score[x])
+                    if (f_score[field] < f_score[x])
                         x = field;
                 }
 
@@ -141,8 +148,7 @@ namespace Collective_learning.Simulation
 
         private Queue<MapField> ReconstructPath(Dictionary<MapField, MapField> cameFrom, MapField end)
         {
-            var result = new List<MapField>();
-            result.Add(end);
+            var result = new List<MapField> {end};
             while (cameFrom.ContainsKey(end))
             {
                 end = cameFrom[end];

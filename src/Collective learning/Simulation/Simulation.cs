@@ -95,6 +95,7 @@ namespace Collective_learning.Simulation
             }
 
             SimulationStatistics.WaterCount -= SimulationStatistics.FoodCount;
+            SimulationStatistics.DiscoveredCount = _map.Fields.Cast<MapField>().Count(t => t.Darker);
         }
     }
 }

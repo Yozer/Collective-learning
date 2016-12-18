@@ -51,6 +51,7 @@ namespace Collective_learning.GUI
         {
             _statisticsText.DisplayedString = $"Pożywienie: {SimulationStatistics.FoodCount}\nWoda: {SimulationStatistics.WaterCount}\n" +
                                               $"Zagrożenia: {SimulationStatistics.DangerCount}\nCzas symulacji: {SimulationStatistics.SimulationTime:mm\\:ss\\:fff}\n" +
+                                              $"Liczba odkrytych pól: {SimulationStatistics.DiscoveredCount}\n" +
                                               $"Liczebność populacji: {SimulationStatistics.PopulationCount}\n";
         }
 

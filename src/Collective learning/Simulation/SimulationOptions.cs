@@ -14,7 +14,7 @@ namespace Collective_learning.Simulation
             set { _agentSpeed = value*1.5f*FieldWidth; }
         }
 
-        public const float ExplorationThreshold = 0.9f;
+        public static float ExplorationThreshold = 0.9f;
 
 
         public const float AgentRadius = 9;

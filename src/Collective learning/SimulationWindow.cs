@@ -57,7 +57,10 @@ namespace Collective_learning
         {
             Box box = new Box();
             var slider = new Slider("Szybkość symulacji", 0.1f, 40f, 3);
-            slider.OnChange += UpdateSimulationSpeed;
+            slider.OnChange += value => SimulationOptions.AgentSpeed = value;
+            box.AddController(slider);
+            slider = new Slider("Exploration threshold", 0.0f, 1f, 0.4f);
+            slider.OnChange += value => SimulationOptions.ExplorationThreshold = value;
             box.AddController(slider);
 
             _panel.AddBox(box);
@@ -79,12 +82,6 @@ namespace Collective_learning
         {
             _simulation.Paused = !_simulation.Paused;
         }
-
-        private void UpdateSimulationSpeed(float value)
-        {
-            SimulationOptions.AgentSpeed = value;
-        }
-
         private void CreateEventHandlers()
         {
             Closed += (s, e) => Close();

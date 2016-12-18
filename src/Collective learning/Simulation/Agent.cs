@@ -97,9 +97,9 @@ namespace Collective_learning.Simulation
             }
             else
             {
-                // just visit something positive
-                var otherPositiveFields = Knowledge.Positive.Where(t => t != CurrentField).ToList();
-                TargetField = otherPositiveFields[SimulationOptions.Random.Next(0, otherPositiveFields.Count)];
+                // just visit something positive, that is close to me
+                TargetField = Knowledge.Positive.Where(t => t != CurrentField).MinBy(t => _map.FindPath(CurrentField, t, Knowledge).Count);
+                //TargetField = otherPositiveFields[SimulationOptions.Random.Next(0, otherPositiveFields.Count)];
             }
         }
 

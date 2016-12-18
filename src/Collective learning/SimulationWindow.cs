@@ -16,8 +16,8 @@ namespace Collective_learning
         private readonly Panel _panel;
 
         private const string WindowTitle = "Collective Learning 0.1";
-        private const uint WindowWidth = 1280u;
-        private const uint WindowHeight = 768u;
+        private const uint WindowWidth = 1920u;
+        private const uint WindowHeight = 1080u;
 
         private Vector2i _lastDragPoint;
         
@@ -56,7 +56,7 @@ namespace Collective_learning
         private void InitGui()
         {
             Box box = new Box();
-            var slider = new Slider("Szybkość symulacji", 0.1f, 40f, 3);
+            var slider = new Slider("Szybkość symulacji", 0.1f, 400f, 3);
             slider.OnChange += value => SimulationOptions.AgentSpeed = value;
             box.AddController(slider);
             slider = new Slider("Exploration threshold", 0.0f, 1f, SimulationOptions.ExplorationThreshold);

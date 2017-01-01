@@ -1,4 +1,5 @@
-﻿using Collective_learning.Simulation.Factory;
+﻿using System.Diagnostics;
+using Collective_learning.Simulation.Factory;
 using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
 using SFML.System;
@@ -13,13 +14,26 @@ namespace Collective_learning
             var window = SimulationWindow.Create(simulation);
 
             Clock clock = new Clock();
+            float totalTime = 0;
+            int frames = 0;
             while (window.IsOpen)
             {
+                if (totalTime > 1f)
+                {
+                    window.FPS.DisplayedString = frames.ToString();
+                    totalTime -= 1f;
+                }
+
+                float time = clock.Restart().AsSeconds();
+                totalTime += time;
+
                 window.DispatchEvents();
-                window.Update(clock.Restart().AsSeconds());
+                window.Update(time);
                 window.Clear(Color.White);
                 window.Draw();
                 window.Display();
+
+                ++frames;
             }
         }
     }

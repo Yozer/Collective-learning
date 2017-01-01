@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
 using SFML.System;
@@ -20,7 +21,8 @@ namespace Collective_learning
         private const uint WindowHeight = 1080u;
 
         private Vector2i _lastDragPoint;
-        
+        public Text FPS { get; }
+
         internal static SimulationWindow Create(ISimulation simulation)
         {
             var contextSettings = new ContextSettings
@@ -51,6 +53,10 @@ namespace Collective_learning
             };
             InitGui();
             CreateEventHandlers();
+
+            FPS = new Text("0", ButtonSettings.DefaultFont, 15);
+            FPS.Position = new Vector2f(5, 5);
+            FPS.Color = Color.Yellow;
         }
 
         private void InitGui()
@@ -151,6 +157,7 @@ namespace Collective_learning
             Draw(_simulation);
             SetView(DefaultView);
             Draw(_panel);
+            Draw(FPS);
         }
     }
 }

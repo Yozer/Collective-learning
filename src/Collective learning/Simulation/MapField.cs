@@ -20,8 +20,6 @@ namespace Collective_learning.Simulation
         private readonly Text _text;
 
         internal float fScore, gScore;
-        internal bool isOpenSet;
-
 
         public FieldType Type
         {

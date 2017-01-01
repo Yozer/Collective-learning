@@ -74,14 +74,7 @@ namespace Collective_learning.Simulation
         {
             public int Compare(MapField a, MapField b)
             {
-                int result = 0;
-                if (!(a.isOpenSet ^ b.isOpenSet))
-                    result = a.fScore < b.fScore ? -1 : a.fScore == b.fScore ? 0 : 1;
-                else if (a.isOpenSet)
-                    return -1;
-                else
-                    return 1;
-
+                int result = a.fScore < b.fScore ? -1 : a.fScore == b.fScore ? 0 : 1;
                 if (result == 0)
                 {
                     result = a._x < b._x ? -1 : a._x == b._x ? 0 : 1;
@@ -103,12 +96,8 @@ namespace Collective_learning.Simulation
             foreach (MapField field in Fields)
             {
                 field.fScore = field.gScore = float.MaxValue;
-                field.isOpenSet = false;
-                f_score.Add(field);
             }
 
-
-            f_score.Remove(start);
             start.gScore = 0;
             start.fScore = Distance(start, end);
             openset.Add(start);
@@ -124,11 +113,8 @@ namespace Collective_learning.Simulation
                 }
 
                 openset.Remove(x);
-                closedset.Add(x);
-
                 f_score.Remove(x);
-                x.isOpenSet = false;
-                f_score.Add(x);
+                closedset.Add(x);
 
                 foreach (var y in GetNeighbors(x, knowledge))
                 {
@@ -140,8 +126,6 @@ namespace Collective_learning.Simulation
                     if (!openset.Contains(y))
                     {
                         openset.Add(y);
-                        f_score.Remove(y);
-                        y.isOpenSet = true;
                         f_score.Add(y);
                     }
                     else if (tentative_g_score >= y.gScore)
@@ -158,7 +142,7 @@ namespace Collective_learning.Simulation
 
             float closest = float.MaxValue;
             end = null;
-            foreach (var entry in f_score)
+            foreach (var entry in closedset)
             {
                 // try to find closest unknown field to end
                 if (!knowledge.KnownFields.Contains(entry) && entry.fScore < closest)
@@ -192,12 +176,23 @@ namespace Collective_learning.Simulation
 
         private List<MapField> GetNeighbors(MapField field, IKnowledge knowledge)
         {
+            //var list = new List<Vector2i>(8)
+            //{
+            //    new Vector2i(field.X - 1, field.Y),
+            //    new Vector2i(field.X, field.Y - 1),
+            //    new Vector2i(field.X, field.Y + 1),
+            //    new Vector2i(field.X + 1, field.Y),
+            //};
             var list = new List<Vector2i>(8)
             {
+                new Vector2i(field.X - 1, field.Y - 1),
                 new Vector2i(field.X - 1, field.Y),
+                new Vector2i(field.X - 1, field.Y + 1),
                 new Vector2i(field.X, field.Y - 1),
                 new Vector2i(field.X, field.Y + 1),
+                new Vector2i(field.X + 1, field.Y - 1),
                 new Vector2i(field.X + 1, field.Y),
+                new Vector2i(field.X + 1, field.Y + 1),
             };
 
             var result = list

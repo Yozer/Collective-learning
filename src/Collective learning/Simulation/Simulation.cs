@@ -33,10 +33,10 @@ namespace Collective_learning.Simulation
 
         private void InitAgents()
         {
-            var globalKnowledge = new Knowledge();
+            var globalKnowledge = SimulationOptions.KnowledgeSharingType == SharingType.Global ? new Knowledge() : null;
             for (int i = 0; i < _options.AgentsCount; ++i)
             {
-                IAgent agent = new Agent(_map, SimulationOptions.KnowledgeSharingType == SharingType.Global ? globalKnowledge : null);
+                IAgent agent = new Agent(_map, globalKnowledge);
                 _agents.Add(agent);
             }
         }
@@ -61,45 +61,30 @@ namespace Collective_learning.Simulation
 
         private void ShareKnowledge()
         {
-            if (SimulationOptions.KnowledgeSharingType == SharingType.Global)
-                GlobalKnowledgeSharing();
+            if (SimulationOptions.KnowledgeSharingType == SharingType.AllBetweenTwo)
+                ShareAllBetweenTwo();
         }
 
-        private void GlobalKnowledgeSharing()
+        private void ShareAllBetweenTwo()
         {
-            // everyone knows everyone knowledge
-            //foreach (IAgent agent in _agents)
-            //{
-            //    foreach (IAgent shareTo in _agents)
-            //    {
-            //        if(agent.Equals(shareTo))
-            //            continue;
-
-            //        foreach (var knowledge in agent.Knowledge.Positive)
-            //        {
-            //            // assume that field can change only from food/water to empty
-            //            if (!shareTo.Knowledge.KnownFields.Contains(knowledge))
-            //            {
-            //                shareTo.Knowledge.Positive.Add(knowledge);
-            //            }
-            //        }
-
-            //        foreach (var knowledge in agent.Knowledge.KnownFields)
-            //        {
-            //            // share information about dry source of water/food
-            //            if (shareTo.Knowledge.Positive.Contains(knowledge) && !agent.Knowledge.Positive.Contains(knowledge))
-            //            {
-            //                shareTo.Knowledge.Positive.Remove(knowledge);
-            //            }
-            //        }
-
-            //        agent.Knowledge.Negative.ToList().ForEach(t => shareTo.Knowledge.Negative.Add(t));
-            //        agent.Knowledge.Blocked.ToList().ForEach(t => shareTo.Knowledge.Blocked.Add(t));
-            //        agent.Knowledge.KnownFields.ToList().ForEach(t => shareTo.Knowledge.KnownFields.Add(t));
-            //    }
-            //}
+            foreach (IAgent agent in _agents)
+            {
+                foreach (IAgent shareTo in _agents)
+                {
+                    if (agent.CollidedAt == null && shareTo.CollidedAt == null && agent.Id != shareTo.Id)
+                    {
+                        if (agent.Bounds.Collides(shareTo.Bounds))
+                        {
+                            agent.ShareAllKnowledgeTo(shareTo);
+                            agent.CollidedAt = DateTime.Now;
+                            shareTo.ShareAllKnowledgeTo(agent);
+                            shareTo.CollidedAt = DateTime.Now;
+                        }
+                    }
+                }
+            }
         }
-
+        
         public void ProcessClick(Vector2f point)
         {
             IAgent clickedAgent = _agents.FirstOrDefault(t => t.Bounds.Contains(point));
@@ -129,13 +114,13 @@ namespace Collective_learning.Simulation
 
             foreach (var agent in _agents)
             {
-                if (_selectedAgent == null || agent == _selectedAgent)
+                if (_selectedAgent == null || agent.Equals(_selectedAgent))
                 {
                     if (agent.TargetField != null)
                         agent.TargetField.SpecialColor = Color.Yellow;
                     foreach (var knownField in agent.Knowledge.KnownFields)
                     {
-                        _map.Fields[knownField.X, knownField.Y].Darker = true;
+                        _map.Fields[knownField.Key.X, knownField.Key.Y].Darker = true;
                     }
 
                     SimulationStatistics.DangerCount += agent.Statistics.DangerCount;

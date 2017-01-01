@@ -44,6 +44,7 @@ namespace Collective_learning.Simulation
         public CircleShape Bounds => _circleShape;
         public SimulationStatistics Statistics { get; } = new SimulationStatistics();
         public int Id { get; }
+        public DateTime? CollidedAt { get; set; }
 
         public bool Selected
         {
@@ -66,17 +67,29 @@ namespace Collective_learning.Simulation
             _circleShape.OutlineColor = Color.Black;
 
             Knowledge = globalKnowledge ?? new Knowledge();
-            Knowledge.KnownFields.Add(map.StartField);
+            Knowledge.KnownFields[map.StartField] = DateTime.Now;
             Id = _internalId++;
         }
         public void Draw(RenderTarget target, RenderStates states)
         {
+            if (CollidedAt.HasValue && CollidedAt.Value.Add(SimulationOptions.SharingKnowledgePenalty) > DateTime.Now)
+                _circleShape.FillColor = Color.Magenta;
+            else
+                Selected = _selected; // reset selection color
+
             target.Draw(_circleShape);
         }
 
-
         public void Update(float delta)
         {
+            if (CollidedAt.HasValue)
+            {
+                if(CollidedAt.Value.Add(SimulationOptions.SharingKnowledgePenalty) > DateTime.Now)
+                    return;
+                else if (CollidedAt.Value.Add(SimulationOptions.NoSharingPriodAfterSharingKnowledge) < DateTime.Now)
+                    CollidedAt = null;
+            }
+
             if (TargetField == null)
             {
                 ChooseTarget();
@@ -89,21 +102,21 @@ namespace Collective_learning.Simulation
         {
             // if we don't know any positive fields or we want to explore
             MapField fieldToExplore;
-            if ((Knowledge.Positive.All(t => t == CurrentField) || SimulationOptions.Random.NextDouble() <= SimulationOptions.ExplorationThreshold)
+            if ((Knowledge.Positive.Keys.All(t => t == CurrentField) || SimulationOptions.Random.NextDouble() <= SimulationOptions.ExplorationThreshold)
                 && (fieldToExplore = ChooseUnknownField()) != null)
             {
                 TargetField = fieldToExplore;
             }
             else if (Knowledge.Positive.Count == 0)
             {
-                var list = Knowledge.KnownFields.Where(t => t.Type != FieldType.Danger && t != CurrentField && t.Type != FieldType.Blocked).ToList();
+                var list = Knowledge.KnownFields.Keys.Where(t => t.Type != FieldType.Danger && t != CurrentField && t.Type != FieldType.Blocked).ToList();
                 TargetField = list[SimulationOptions.Random.Next(0, list.Count)];
             }
             else
             {
                 // just visit something positive, that is close to me
                 //TargetField = Knowledge.Positive.Where(t => t != CurrentField).MinBy(t => _map.FindPath(CurrentField, t, Knowledge)?.Count ?? int.MaxValue);
-                TargetField = Knowledge.Positive.Where(t => t != CurrentField).MinBy(t => Math.Sqrt((t.X-CurrentField.X)*(t.X-CurrentField.X)+(t.Y-CurrentField.Y)*(t.Y-CurrentField.Y)));
+                TargetField = Knowledge.Positive.Keys.Where(t => t != CurrentField).MinBy(t => Math.Sqrt((t.X-CurrentField.X)*(t.X-CurrentField.X)+(t.Y-CurrentField.Y)*(t.Y-CurrentField.Y)));
             }
         }
 
@@ -113,8 +126,8 @@ namespace Collective_learning.Simulation
             if (Path == null)
             {
                 // we know entire neighborhood of this place and we still were unable to find a path thus we cannot reach that place.
-                Knowledge.KnownFields.Add(TargetField);
-                Knowledge.Blocked.Add(TargetField);
+                Knowledge.KnownFields[TargetField] = DateTime.Now;
+                Knowledge.Blocked[TargetField] = DateTime.Now;
                 ChooseTarget();
                 InvalidatePathToTarget();
             }
@@ -191,7 +204,7 @@ namespace Collective_learning.Simulation
 
         protected void UpdateKnowledge(MapField newField)
         {
-            if (Knowledge.KnownFields.Contains(newField))
+            if (Knowledge.KnownFields.ContainsKey(newField))
             {
                 Knowledge.Positive.Remove(newField);
                 Knowledge.Negative.Remove(newField);
@@ -199,23 +212,23 @@ namespace Collective_learning.Simulation
             }
             else
             {
-                Knowledge.KnownFields.Add(newField);
+                Knowledge.KnownFields[newField] = DateTime.Now;
             }
 
             if (newField.Type == FieldType.Food || newField.Type == FieldType.Water)
-                Knowledge.Positive.Add(newField);
+                Knowledge.Positive[newField] = DateTime.Now;
             else if (newField.Type == FieldType.Danger)
             {
-                Knowledge.Negative.Add(newField);
+                Knowledge.Negative[newField] = DateTime.Now;
                 ++Statistics.DangerCount;
             }
             else if (newField.Type == FieldType.Blocked)
-                Knowledge.Blocked.Add(newField);
+                Knowledge.Blocked[newField] = DateTime.Now;
         }
 
         private MapField ChooseUnknownField()
         {
-            var unknown = _map.Fields.Cast<MapField>().Where(t => !Knowledge.KnownFields.Contains(t) && t != CurrentField).ToList();
+            var unknown = _map.Fields.Cast<MapField>().Where(t => !Knowledge.KnownFields.ContainsKey(t) && t != CurrentField).ToList();
             if (unknown.Count == 0)
                 return null;
 
@@ -236,5 +249,25 @@ namespace Collective_learning.Simulation
         {
             return Id.GetHashCode();
         }
+
+        public void ShareAllKnowledgeTo(IAgent shareTo)
+        {
+            TransferKnowledge(Knowledge.Positive, shareTo.Knowledge.Positive);
+            TransferKnowledge(Knowledge.Blocked, shareTo.Knowledge.Blocked);
+            TransferKnowledge(Knowledge.Negative, shareTo.Knowledge.Negative);
+            TransferKnowledge(Knowledge.KnownFields, shareTo.Knowledge.KnownFields);
+        }
+
+        private void TransferKnowledge(IDictionary<MapField, DateTime> from, IDictionary<MapField, DateTime> to)
+        {
+            foreach (var entry in from)
+            {
+                if (!to.ContainsKey(entry.Key) || to[entry.Key] < entry.Value)
+                {
+                    to[entry.Key] = entry.Value;
+                }
+            }
+        }
+
     }
 }

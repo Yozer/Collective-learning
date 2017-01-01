@@ -145,7 +145,7 @@ namespace Collective_learning.Simulation
             foreach (var entry in closedset)
             {
                 // try to find closest unknown field to end
-                if (!knowledge.KnownFields.Contains(entry) && entry.fScore < closest)
+                if (!knowledge.KnownFields.ContainsKey(entry) && entry.fScore < closest)
                 {
                     end = entry;
                     closest = entry.fScore;
@@ -199,10 +199,10 @@ namespace Collective_learning.Simulation
                 .Where(t => t.X >= 0 && t.X < Width && t.Y >= 0 && t.Y < Height)
                 .Select(t => Fields[t.X, t.Y]);
 
-            if (!knowledge.KnownFields.Contains(field))
-                result = result.Where(t => knowledge.KnownFields.Contains(t) && !knowledge.Negative.Contains(t) && !knowledge.Blocked.Contains(t)); // from unknown we can only go to known
+            if (!knowledge.KnownFields.ContainsKey(field))
+                result = result.Where(t => knowledge.KnownFields.ContainsKey(t) && !knowledge.Negative.ContainsKey(t) && !knowledge.Blocked.ContainsKey(t)); // from unknown we can only go to known
             else
-                result = result.Where(t => !knowledge.KnownFields.Contains(t) || (!knowledge.Negative.Contains(t) && !knowledge.Blocked.Contains(t))); // from known we can go anywhere but not negative
+                result = result.Where(t => !knowledge.KnownFields.ContainsKey(t) || (!knowledge.Negative.ContainsKey(t) && !knowledge.Blocked.ContainsKey(t))); // from known we can go anywhere but not negative
 
             return result.ToList();
         }

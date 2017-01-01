@@ -37,8 +37,8 @@ namespace Collective_learning
             _simulation = simulation;
 
             SetVisible(true);
-            SetVerticalSyncEnabled(true);
-            SetFramerateLimit(60);
+            SetVerticalSyncEnabled(false);
+            //SetFramerateLimit(60);
             SetActive();
 
             _simulationView = new View(new FloatRect(0, 0, WindowWidth, WindowHeight));

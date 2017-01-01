@@ -120,5 +120,12 @@ namespace SFML.Graphics
 
         private float myRadius;
         private uint myPointCount;
+
+        public bool Collides(CircleShape bounds)
+        {
+            // (x2-x1)^2 + (y1-y2)^2 <= (r1+r2)^2
+            return (Position.X - bounds.Position.X) * (Position.X - bounds.Position.X) + (Position.Y - bounds.Position.Y) * (Position.Y - bounds.Position.Y) <= 
+                (Radius + bounds.Radius) * (Radius + bounds.Radius);
+        }
     }
 }

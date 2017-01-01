@@ -6,7 +6,7 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 1;
+        public int AgentsCount { get; } = 5;
 
         public static float AgentSpeed
         {
@@ -15,7 +15,9 @@ namespace Collective_learning.Simulation
         }
 
         public static float ExplorationThreshold = 0.2f;
-        public static SharingType KnowledgeSharingType = SharingType.Global;
+        public static TimeSpan SharingKnowledgePenalty = TimeSpan.FromSeconds(5);
+        public static TimeSpan NoSharingPriodAfterSharingKnowledge = TimeSpan.FromSeconds(10);
+        public static SharingType KnowledgeSharingType = SharingType.AllBetweenTwo;
 
 
         public const float AgentRadius = 9;
@@ -54,6 +56,7 @@ namespace Collective_learning.Simulation
     internal enum SharingType
     {
         NoSharing,
-        Global
+        Global,
+        AllBetweenTwo
     }
 }

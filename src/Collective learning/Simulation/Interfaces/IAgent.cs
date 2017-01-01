@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SFML.Graphics;
 
 namespace Collective_learning.Simulation.Interfaces
@@ -12,6 +13,7 @@ namespace Collective_learning.Simulation.Interfaces
         CircleShape Bounds { get; }
         SimulationStatistics Statistics { get; }
         int Id { get; }
-
+        DateTime? CollidedAt { get; set; }
+        void ShareAllKnowledgeTo(IAgent shareTo);
     }
 }

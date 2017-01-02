@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using SFML.Graphics;
 
 namespace Collective_learning.Simulation.Interfaces
@@ -15,5 +15,6 @@ namespace Collective_learning.Simulation.Interfaces
         int Id { get; }
         DateTime? CollidedAt { get; set; }
         void ShareAllKnowledgeTo(IAgent shareTo);
+        void ShareRandomKnowledgeTo(IAgent shareTo);
     }
 }

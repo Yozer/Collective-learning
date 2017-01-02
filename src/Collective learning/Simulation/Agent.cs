@@ -66,9 +66,11 @@ namespace Collective_learning.Simulation
             _circleShape.OutlineThickness = 1.0f;
             _circleShape.OutlineColor = Color.Black;
 
-            Knowledge = globalKnowledge ?? new Knowledge();
+            Knowledge = globalKnowledge ?? new Knowledge(map.Fields.Length);
             Knowledge.KnownFields[map.StartField] = DateTime.Now;
             Id = _internalId++;
+
+            CollidedAt = DateTime.Now;
         }
         public void Draw(RenderTarget target, RenderStates states)
         {
@@ -86,7 +88,7 @@ namespace Collective_learning.Simulation
             {
                 if(CollidedAt.Value.Add(SimulationOptions.SharingKnowledgePenalty) > DateTime.Now)
                     return;
-                else if (CollidedAt.Value.Add(SimulationOptions.NoSharingPriodAfterSharingKnowledge) < DateTime.Now)
+                else if (CollidedAt.Value.Add(SimulationOptions.NoSharingPeriodAfterSharingKnowledge) < DateTime.Now)
                     CollidedAt = null;
             }
 
@@ -210,10 +212,7 @@ namespace Collective_learning.Simulation
                 Knowledge.Negative.Remove(newField);
                 Knowledge.Blocked.Remove(newField);
             }
-            else
-            {
-                Knowledge.KnownFields[newField] = DateTime.Now;
-            }
+            Knowledge.KnownFields[newField] = DateTime.Now;
 
             if (newField.Type == FieldType.Food || newField.Type == FieldType.Water)
                 Knowledge.Positive[newField] = DateTime.Now;
@@ -252,22 +251,32 @@ namespace Collective_learning.Simulation
 
         public void ShareAllKnowledgeTo(IAgent shareTo)
         {
-            TransferKnowledge(Knowledge.Positive, shareTo.Knowledge.Positive);
-            TransferKnowledge(Knowledge.Blocked, shareTo.Knowledge.Blocked);
-            TransferKnowledge(Knowledge.Negative, shareTo.Knowledge.Negative);
-            TransferKnowledge(Knowledge.KnownFields, shareTo.Knowledge.KnownFields);
+            TransferKnowledge(Knowledge.KnownFields.ToList(), shareTo);
         }
 
-        private void TransferKnowledge(IDictionary<MapField, DateTime> from, IDictionary<MapField, DateTime> to)
+        public void ShareRandomKnowledgeTo(IAgent shareTo)
         {
-            foreach (var entry in from)
+            int knowledgeCountToShare = SimulationOptions.Random.Next(SimulationOptions.ShareRandomKnowledgeMin, SimulationOptions.ShareRandomKnowledgeMax + 1);
+            var knowledgeToTransfer = Knowledge.KnownFields.ToList().Shuffle().Take(knowledgeCountToShare).ToList();
+            TransferKnowledge(knowledgeToTransfer, shareTo);
+        }
+
+        private void TransferKnowledge(IList<KeyValuePair<MapField, DateTime>> knowledgeToTransfer, IAgent shareTo)
+        {
+            foreach (var pair in knowledgeToTransfer)
             {
-                if (!to.ContainsKey(entry.Key) || to[entry.Key] < entry.Value)
+                // don't know that or he's knowledge is outdated
+                if (!shareTo.Knowledge.KnownFields.ContainsKey(pair.Key) || shareTo.Knowledge.KnownFields[pair.Key] < pair.Value)
                 {
-                    to[entry.Key] = entry.Value;
+                    shareTo.Knowledge.KnownFields[pair.Key] = pair.Value;
+                    if (Knowledge.Positive.ContainsKey(pair.Key))
+                        shareTo.Knowledge.Positive[pair.Key] = Knowledge.Positive[pair.Key];
+                    else if (Knowledge.Blocked.ContainsKey(pair.Key))
+                        shareTo.Knowledge.Blocked[pair.Key] = Knowledge.Blocked[pair.Key];
+                    else if (Knowledge.Negative.ContainsKey(pair.Key))
+                        shareTo.Knowledge.Negative[pair.Key] = Knowledge.Negative[pair.Key];
                 }
             }
         }
-
     }
 }

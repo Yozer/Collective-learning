@@ -174,8 +174,37 @@ namespace Collective_learning.Simulation
             return (float)Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
         }
 
-        private List<MapField> GetNeighbors(MapField field, IKnowledge knowledge)
+        private static Vector2i[] array =
         {
+            new Vector2i(-1, -1),
+            new Vector2i(-1, 0),
+            new Vector2i(-1, 1),
+            new Vector2i(0, -1),
+            new Vector2i(0, 1),
+            new Vector2i(1, -1),
+            new Vector2i(1, 0),
+            new Vector2i(1, 1),
+        };
+        private IEnumerable<MapField> GetNeighbors(MapField field, IKnowledge knowledge)
+        {
+            bool isKnownField = knowledge.KnownFields.ContainsKey(field);
+            for (int i = 0; i < array.Length; ++i)
+            {
+                if (field.X + array[i].X >= 0 && field.X + array[i].X < Width && field.Y + array[i].Y >= 0 && field.Y + array[i].Y < Height)
+                {
+                    var neighbor = Fields[field.X + array[i].X, field.Y + array[i].Y];
+                    if (!isKnownField)
+                    {
+                        if (knowledge.KnownFields.ContainsKey(neighbor) && neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked)
+                            yield return neighbor;
+                    }
+                    else
+                    {
+                        if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
+                            yield return neighbor;
+                    }
+                }
+            }
             //var list = new List<Vector2i>(8)
             //{
             //    new Vector2i(field.X - 1, field.Y),
@@ -183,28 +212,28 @@ namespace Collective_learning.Simulation
             //    new Vector2i(field.X, field.Y + 1),
             //    new Vector2i(field.X + 1, field.Y),
             //};
-            var list = new List<Vector2i>(8)
-            {
-                new Vector2i(field.X - 1, field.Y - 1),
-                new Vector2i(field.X - 1, field.Y),
-                new Vector2i(field.X - 1, field.Y + 1),
-                new Vector2i(field.X, field.Y - 1),
-                new Vector2i(field.X, field.Y + 1),
-                new Vector2i(field.X + 1, field.Y - 1),
-                new Vector2i(field.X + 1, field.Y),
-                new Vector2i(field.X + 1, field.Y + 1),
-            };
+            //var list = new List<Vector2i>(8)
+            //{
+            //    new Vector2i(field.X - 1, field.Y - 1),
+            //    new Vector2i(field.X - 1, field.Y),
+            //    new Vector2i(field.X - 1, field.Y + 1),
+            //    new Vector2i(field.X, field.Y - 1),
+            //    new Vector2i(field.X, field.Y + 1),
+            //    new Vector2i(field.X + 1, field.Y - 1),
+            //    new Vector2i(field.X + 1, field.Y),
+            //    new Vector2i(field.X + 1, field.Y + 1),
+            //};
 
-            var result = list
-                .Where(t => t.X >= 0 && t.X < Width && t.Y >= 0 && t.Y < Height)
-                .Select(t => Fields[t.X, t.Y]);
+            //var result = list
+            //    .Where(t => t.X >= 0 && t.X < Width && t.Y >= 0 && t.Y < Height)
+            //    .Select(t => Fields[t.X, t.Y]);
 
-            if (!knowledge.KnownFields.ContainsKey(field))
-                result = result.Where(t => knowledge.KnownFields.ContainsKey(t) && !knowledge.Negative.ContainsKey(t) && !knowledge.Blocked.ContainsKey(t)); // from unknown we can only go to known
-            else
-                result = result.Where(t => !knowledge.KnownFields.ContainsKey(t) || (!knowledge.Negative.ContainsKey(t) && !knowledge.Blocked.ContainsKey(t))); // from known we can go anywhere but not negative
+            //if (!knowledge.KnownFields.ContainsKey(field))
+            //    result = result.Where(t => knowledge.KnownFields.ContainsKey(t) && t.Type != FieldType.Danger && t.Type != FieldType.Blocked); // from unknown we can only go to known
+            //else
+            //    result = result.Where(t => !knowledge.KnownFields.ContainsKey(t) || (t.Type != FieldType.Danger && t.Type != FieldType.Blocked)); // from known we can go anywhere but not negative
 
-            return result.ToList();
+            //return result.ToList();
         }
     }
 

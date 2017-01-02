@@ -5,9 +5,9 @@ namespace Collective_learning.Simulation.Interfaces
 {
     public interface IKnowledge
     {
-        IDictionary<MapField, DateTime> Positive { get; }
-        IDictionary<MapField, DateTime> Negative { get; }
-        IDictionary<MapField, DateTime> Blocked { get; }
-        IDictionary<MapField, DateTime> KnownFields { get; }
+        Dictionary<MapField, DateTime> Positive { get; }
+        Dictionary<MapField, DateTime> Negative { get; }
+        Dictionary<MapField, DateTime> Blocked { get; }
+        Dictionary<MapField, DateTime> KnownFields { get; }
     }
 }

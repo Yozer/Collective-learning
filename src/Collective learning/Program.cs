@@ -22,6 +22,7 @@ namespace Collective_learning
                 {
                     window.FPS.DisplayedString = frames.ToString();
                     totalTime -= 1f;
+                    frames = 0;
                 }
 
                 float time = clock.Restart().AsSeconds();

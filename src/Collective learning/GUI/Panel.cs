@@ -49,8 +49,10 @@ namespace Collective_learning.GUI
         }
         private void UpdateStatisticsString()
         {
-            _statisticsText.DisplayedString = $"Pożywienie: {SimulationStatistics.FoodCount}\nWoda: {SimulationStatistics.WaterCount}\n" +
-                                              $"Zagrożenia: {SimulationStatistics.DangerCount}\nCzas symulacji: {SimulationStatistics.SimulationTime:mm\\:ss\\:fff}\n" +
+            _statisticsText.DisplayedString = $"Pożywienie: {SimulationStatistics.FoodCount}/{SimulationStatistics.AllFoodCount}\n" +
+                                              $"Woda: {SimulationStatistics.WaterCount}/{SimulationStatistics.AllWaterCount}\n" +
+                                              $"Zagrożenia: {SimulationStatistics.DangerCount}. Wszystkie: {SimulationStatistics.AllThreads}\n" +
+                                              $"Czas symulacji: {SimulationStatistics.SimulationTime:mm\\:ss\\:fff}\n" +
                                               $"Liczba odkrytych pól: {SimulationStatistics.DiscoveredCount}/{SimulationStatistics.AllFieldsCount}\n" +
                                               $"Liczebność populacji: {SimulationStatistics.PopulationCount}\n";
         }

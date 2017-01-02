@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Collective_learning.Simulation;
 
 namespace Collective_learning
 {
@@ -40,6 +41,20 @@ namespace Collective_learning
                 }
                 return min;
             }
+        }
+
+        public static List<T> Shuffle<T>(this List<T> array)
+        {
+            int n = array.Count;
+            for (int i = 0; i < n; i++)
+            {
+                int r = i + (int)(SimulationOptions.Random.NextDouble() * (n - i));
+                T t = array[r];
+                array[r] = array[i];
+                array[i] = t;
+            }
+
+            return array;
         }
     }
 }

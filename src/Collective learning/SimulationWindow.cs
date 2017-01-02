@@ -17,10 +17,11 @@ namespace Collective_learning
         private readonly Panel _panel;
 
         private const string WindowTitle = "Collective Learning 0.1";
-        private const uint WindowWidth = 1920u;
-        private const uint WindowHeight = 1080u;
+        private const uint WindowWidth = 2560u;
+        private const uint WindowHeight = 1440u;
 
         private Vector2i _lastDragPoint;
+        private bool _draw = false;
         public Text FPS { get; }
 
         internal static SimulationWindow Create(ISimulation simulation)
@@ -34,7 +35,7 @@ namespace Collective_learning
         }
 
         private SimulationWindow(ISimulation simulation, ContextSettings contextSettings)
-            : base(new VideoMode(WindowWidth, WindowHeight), WindowTitle, Styles.Default, contextSettings)
+            : base(new VideoMode(WindowWidth, WindowHeight), WindowTitle, Styles.Fullscreen, contextSettings)
         {
             _simulation = simulation;
 
@@ -117,6 +118,8 @@ namespace Collective_learning
         {
             if (args.Code == Keyboard.Key.Escape)
                 Close();
+            else if (args.Code == Keyboard.Key.P)
+                _draw = !_draw;
         }
 
 
@@ -153,8 +156,11 @@ namespace Collective_learning
         }
         internal void Draw()
         {
-            SetView(_simulationView);
-            Draw(_simulation);
+            if (_draw)
+            {
+                SetView(_simulationView);
+                Draw(_simulation);
+            }
             SetView(DefaultView);
             Draw(_panel);
             Draw(FPS);

@@ -28,12 +28,16 @@ namespace Collective_learning.Simulation
             InitAgents();
 
             SimulationStatistics.AllFieldsCount = _map.Fields.Length;
+            SimulationStatistics.FoodCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Food) * SimulationOptions.ResourceCount;
+            SimulationStatistics.AllFoodCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Water) * SimulationOptions.ResourceCount;
+            SimulationStatistics.AllWaterCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Water) * SimulationOptions.ResourceCount;
+            SimulationStatistics.AllThreads = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Danger);
             SimulationStatistics.PopulationCount = _agents.Count;
         }
 
         private void InitAgents()
         {
-            var globalKnowledge = SimulationOptions.KnowledgeSharingType == SharingType.Global ? new Knowledge() : null;
+            var globalKnowledge = SimulationOptions.KnowledgeSharingType == SharingType.Global ? new Knowledge(_map.Fields.Length) : null;
             for (int i = 0; i < _options.AgentsCount; ++i)
             {
                 IAgent agent = new Agent(_map, globalKnowledge);
@@ -63,22 +67,42 @@ namespace Collective_learning.Simulation
         {
             if (SimulationOptions.KnowledgeSharingType == SharingType.AllBetweenTwo)
                 ShareAllBetweenTwo();
+            else if(SimulationOptions.KnowledgeSharingType == SharingType.RandomBetweenTwo)
+                ShareRandomBetweenTwo();
         }
 
         private void ShareAllBetweenTwo()
         {
+            foreach (var collision in GetAgentsThatCollide())
+            {
+                collision.Agent.ShareAllKnowledgeTo(collision.CollideWith);
+                collision.CollideWith.ShareAllKnowledgeTo(collision.Agent);
+            }
+        }
+        private void ShareRandomBetweenTwo()
+        {
+            foreach (var collision in GetAgentsThatCollide())
+            {
+                collision.Agent.ShareRandomKnowledgeTo(collision.CollideWith);
+                collision.CollideWith.ShareRandomKnowledgeTo(collision.Agent);
+            }
+        }
+        private IEnumerable<CollisionResult> GetAgentsThatCollide()
+        {
             foreach (IAgent agent in _agents)
             {
-                foreach (IAgent shareTo in _agents)
+                if (agent.CollidedAt != null)
+                    continue;
+
+                foreach (IAgent collideWith in _agents)
                 {
-                    if (agent.CollidedAt == null && shareTo.CollidedAt == null && agent.Id != shareTo.Id)
+                    if (collideWith.CollidedAt == null && agent.Id != collideWith.Id)
                     {
-                        if (agent.Bounds.Collides(shareTo.Bounds))
+                        if (agent.Bounds.Collides(collideWith.Bounds))
                         {
-                            agent.ShareAllKnowledgeTo(shareTo);
                             agent.CollidedAt = DateTime.Now;
-                            shareTo.ShareAllKnowledgeTo(agent);
-                            shareTo.CollidedAt = DateTime.Now;
+                            collideWith.CollidedAt = DateTime.Now;
+                            yield return new CollisionResult(agent, collideWith);
                         }
                     }
                 }
@@ -130,6 +154,19 @@ namespace Collective_learning.Simulation
             }
 
             SimulationStatistics.DiscoveredCount = _map.Fields.Cast<MapField>().Count(t => t.Darker);
+        }
+
+        struct CollisionResult
+        {
+            public CollisionResult(IAgent agent, IAgent collideWith)
+            {
+                Agent = agent;
+                CollideWith = collideWith;
+            }
+
+            public IAgent Agent { get; }
+            public IAgent CollideWith { get; }
+
         }
     }
 }

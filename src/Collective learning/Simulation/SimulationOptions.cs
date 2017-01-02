@@ -6,7 +6,7 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 5;
+        public int AgentsCount { get; } = 100;
 
         public static float AgentSpeed
         {
@@ -16,16 +16,19 @@ namespace Collective_learning.Simulation
 
         public static float ExplorationThreshold = 0.2f;
         public static TimeSpan SharingKnowledgePenalty = TimeSpan.FromSeconds(5);
-        public static TimeSpan NoSharingPriodAfterSharingKnowledge = TimeSpan.FromSeconds(10);
-        public static SharingType KnowledgeSharingType = SharingType.AllBetweenTwo;
+        public static TimeSpan NoSharingPeriodAfterSharingKnowledge = TimeSpan.FromSeconds(10);
+        public static int ShareRandomKnowledgeMin = 2;
+        public static int ShareRandomKnowledgeMax = 5;
+
+        public static SharingType KnowledgeSharingType = SharingType.Global;
 
 
-        public const float AgentRadius = 9;
+        public const float AgentRadius = 4;
         public static readonly Color AgentColor = new Color(99, 60, 5); // brown
         public static readonly Color SelectedAgentColor = new Color(166, 103, 8); // light brown
 
-        public const float FieldWidth = 38;
-        public const float FieldHeight = 38;
+        public const float FieldWidth = 14;
+        public const float FieldHeight = 14;
         public const int ResourceCount = 5;
 
         public static readonly Dictionary<char, FieldType> FieldTypes = new Dictionary<char, FieldType>
@@ -57,6 +60,7 @@ namespace Collective_learning.Simulation
     {
         NoSharing,
         Global,
-        AllBetweenTwo
+        AllBetweenTwo,
+        RandomBetweenTwo
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 using SFML.Graphics;
 
 namespace Collective_learning.Simulation.Interfaces
@@ -13,7 +12,8 @@ namespace Collective_learning.Simulation.Interfaces
         CircleShape Bounds { get; }
         SimulationStatistics Statistics { get; }
         int Id { get; }
-        DateTime? CollidedAt { get; set; }
+        int? CollidedAt { get; set; }
+        int SimulationStep { get; }
         void ShareAllKnowledgeTo(IAgent shareTo);
         void ShareRandomKnowledgeTo(IAgent shareTo);
     }

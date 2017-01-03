@@ -28,7 +28,7 @@ namespace Collective_learning.Simulation
             InitAgents();
 
             SimulationStatistics.AllFieldsCount = _map.Fields.Length;
-            SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = SimulationStatistics.DangerCount = 0;
+            SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = SimulationStatistics.DangerCount = SimulationStatistics.SimulationStep = 0;
             SimulationStatistics.AllFoodCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Food) * SimulationOptions.ResourceCount;
             SimulationStatistics.AllWaterCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Water) * SimulationOptions.ResourceCount;
             SimulationStatistics.AllThreads = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Danger);
@@ -57,7 +57,7 @@ namespace Collective_learning.Simulation
             if(Paused)
                 return;
 
-            SimulationStatistics.SimulationTime = SimulationStatistics.SimulationTime.Add(TimeSpan.FromSeconds(delta));
+            ++SimulationStatistics.SimulationStep;
 
             _agents.ForEach(t => t.Update(delta));
             CalculateStatistics();
@@ -99,10 +99,10 @@ namespace Collective_learning.Simulation
                 {
                     if (collideWith.CollidedAt == null && agent.Id != collideWith.Id)
                     {
-                        if (agent.Bounds.Collides(collideWith.Bounds))
+                        if (agent.Bounds.Collides(collideWith.Bounds) && SimulationOptions.Random.NextDouble() < SimulationOptions.ChanceToShareKnowledge)
                         {
-                            agent.CollidedAt = DateTime.Now;
-                            collideWith.CollidedAt = DateTime.Now;
+                            agent.CollidedAt = agent.SimulationStep;
+                            collideWith.CollidedAt = collideWith.SimulationStep;
                             yield return new CollisionResult(agent, collideWith);
                         }
                     }

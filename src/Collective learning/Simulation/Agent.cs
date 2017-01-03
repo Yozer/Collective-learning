@@ -44,7 +44,8 @@ namespace Collective_learning.Simulation
         public CircleShape Bounds => _circleShape;
         public SimulationStatistics Statistics { get; }
         public int Id { get; }
-        public DateTime? CollidedAt { get; set; }
+        public int? CollidedAt { get; set; }
+        public int SimulationStep { get; private set; } = 0;
 
         public bool Selected
         {
@@ -71,11 +72,11 @@ namespace Collective_learning.Simulation
             Knowledge.KnownFields[map.StartField] = DateTime.Now;
             Id = _internalId++;
 
-            CollidedAt = DateTime.Now;
+            CollidedAt = 1;
         }
         public void Draw(RenderTarget target, RenderStates states)
         {
-            if (CollidedAt.HasValue && CollidedAt.Value.Add(SimulationOptions.SharingKnowledgePenalty) > DateTime.Now)
+            if (CollidedAt.HasValue && CollidedAt + SimulationOptions.SharingKnowledgePenalty > SimulationStep)
                 _circleShape.FillColor = Color.Magenta;
             else
                 Selected = _selected; // reset selection color
@@ -85,11 +86,12 @@ namespace Collective_learning.Simulation
 
         public void Update(float delta)
         {
+            ++SimulationStep;
             if (CollidedAt.HasValue)
             {
-                if(CollidedAt.Value.Add(SimulationOptions.SharingKnowledgePenalty) > DateTime.Now)
+                if(CollidedAt.Value + SimulationOptions.SharingKnowledgePenalty > SimulationStep)
                     return;
-                else if (CollidedAt.Value.Add(SimulationOptions.NoSharingPeriodAfterSharingKnowledge) < DateTime.Now)
+                else if (CollidedAt.Value + SimulationOptions.NoSharingPeriodAfterSharingKnowledge < SimulationStep)
                     CollidedAt = null;
             }
 

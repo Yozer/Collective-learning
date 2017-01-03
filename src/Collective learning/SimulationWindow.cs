@@ -22,6 +22,8 @@ namespace Collective_learning
 
         private Vector2i _lastDragPoint;
         private bool _draw = SimulationOptions.SimulationType == SimulationType.Pretty;
+        private float _accumulator = 0f;
+
         public Text FPS { get; }
 
         internal static SimulationWindow Create(ISimulation simulation)
@@ -63,11 +65,23 @@ namespace Collective_learning
         private void InitGui()
         {
             Box box = new Box();
-            var slider = new Slider("Szybkość symulacji", 0.1f, 1000f, 3, "0");
-            slider.OnChange += value => SimulationOptions.AgentSpeed = value;
+            var slider = new Slider("Szybkość symulacji", 0f, 1000f, SimulationOptions.SimulationSpeed, "0");
+            slider.OnChange += value => SimulationOptions.SimulationSpeed = (int)Math.Round(value);
             box.AddController(slider);
-            slider = new Slider("Exploration threshold", 0.0f, 1f, SimulationOptions.ExplorationThreshold, "0.000");
+            slider = new Slider("Próg eksploracji", 0.0f, 1f, SimulationOptions.ExplorationThreshold, "0.000");
             slider.OnChange += value => SimulationOptions.ExplorationThreshold = value;
+            box.AddController(slider);
+
+            slider = new Slider("Kara za dzielenie się wiedzą", 0, 5000, SimulationOptions.SharingKnowledgePenalty, "0");
+            slider.OnChange += value => SimulationOptions.SharingKnowledgePenalty = (int)Math.Round(value);
+            box.AddController(slider);
+
+            slider = new Slider("Okres nie dzielenia się wiedzą", 0, 5000, SimulationOptions.NoSharingPeriodAfterSharingKnowledge, "0");
+            slider.OnChange += value => SimulationOptions.NoSharingPeriodAfterSharingKnowledge = (int)Math.Round(value);
+            box.AddController(slider);
+
+            slider = new Slider("Szansa na przekazanie wiedzy", 0.0f, 1f, SimulationOptions.ChanceToShareKnowledge, "0.000");
+            slider.OnChange += value => SimulationOptions.ChanceToShareKnowledge = value;
             box.AddController(slider);
 
             _panel.AddBox(box);
@@ -140,6 +154,7 @@ namespace Collective_learning
                 _lastDragPoint = default(Vector2i);
             }
         }
+
         internal void Update(float delta)
         {
             var mousePoint = Mouse.GetPosition(this);
@@ -151,8 +166,14 @@ namespace Collective_learning
                     HandleDragging(mousePoint);
             }
 
-            _simulation.Update(delta);
-            UpdateStatistics();
+            if (_accumulator >= SimulationOptions.SimulationSpeed)
+            {
+                _accumulator -= SimulationOptions.SimulationSpeed;
+                _simulation.Update(delta);
+                UpdateStatistics();
+            }
+
+            _accumulator += delta * 1000;
         }
         internal void Draw()
         {

@@ -8,15 +8,20 @@ namespace Collective_learning.Simulation
     {
         public int AgentsCount { get; } = 100;
 
-        public static float AgentSpeed
-        {
-            get { return _agentSpeed; }
-            set { _agentSpeed = value*1.5f*FieldWidth; }
-        }
+        public const float AgentSpeed = 3 * 1.5f * 32;
+        //{
+        //    get { return _agentSpeed; }
+        //    set { _agentSpeed = value*1.5f*FieldWidth; }
+        //}
 
+
+        public static int SimulationSpeed = 0;
         public static float ExplorationThreshold = 0.2f;
-        public static TimeSpan SharingKnowledgePenalty = TimeSpan.FromSeconds(5);
-        public static TimeSpan NoSharingPeriodAfterSharingKnowledge = TimeSpan.FromSeconds(10);
+        public static int SharingKnowledgePenalty = 300;
+        public static int NoSharingPeriodAfterSharingKnowledge = 1000;
+        public static float ChanceToShareKnowledge = 0.7f;
+
+
         public static int ShareRandomKnowledgeMin = 2;
         public static int ShareRandomKnowledgeMax = 5;
 

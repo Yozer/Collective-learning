@@ -171,28 +171,28 @@ namespace Collective_learning.Simulation
         private float Distance(MapField a, MapField b)
         {
             //return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
-            return (float)Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
+            return (float)Math.Sqrt((a._x - b._x) * (a._x - b._x) + (a._y - b._y) * (a._y - b._y));
         }
 
-        private static Vector2i[] array =
+        private static int[][] array =
         {
-            new Vector2i(-1, -1),
-            new Vector2i(-1, 0),
-            new Vector2i(-1, 1),
-            new Vector2i(0, -1),
-            new Vector2i(0, 1),
-            new Vector2i(1, -1),
-            new Vector2i(1, 0),
-            new Vector2i(1, 1),
+            new [] {-1, -1},
+            new [] {-1, 0},
+            new [] {-1, 1},
+            new [] {0, -1},
+            new [] {0, 1},
+            new [] {1, -1},
+            new [] {1, 0},
+            new [] {1, 1},
         };
         private IEnumerable<MapField> GetNeighbors(MapField field, IKnowledge knowledge)
         {
             bool isKnownField = knowledge.KnownFields.ContainsKey(field);
             for (int i = 0; i < array.Length; ++i)
             {
-                if (field.X + array[i].X >= 0 && field.X + array[i].X < Width && field.Y + array[i].Y >= 0 && field.Y + array[i].Y < Height)
+                if (field._x + array[i][0] >= 0 && field._x + array[i][0] < Width && field._y + array[i][1] >= 0 && field._y + array[i][1] < Height)
                 {
-                    var neighbor = Fields[field.X + array[i].X, field.Y + array[i].Y];
+                    var neighbor = Fields[field._x + array[i][0], field._y + array[i][1]];
                     if (!isKnownField)
                     {
                         if (knowledge.KnownFields.ContainsKey(neighbor) && neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked)

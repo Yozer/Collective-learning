@@ -118,7 +118,7 @@ namespace Collective_learning.Simulation
             {
                 // just visit something positive, that is close to me
                 //TargetField = Knowledge.Positive.Where(t => t != CurrentField).MinBy(t => _map.FindPath(CurrentField, t, Knowledge)?.Count ?? int.MaxValue);
-                TargetField = Knowledge.Positive.Keys.Where(t => t != CurrentField).MinBy(t => Math.Sqrt((t.X-CurrentField.X)*(t.X-CurrentField.X)+(t.Y-CurrentField.Y)*(t.Y-CurrentField.Y)));
+                TargetField = Knowledge.Positive.Keys.Where(t => t != CurrentField).MinBy(t => Math.Sqrt((t._x-CurrentField._x)*(t._x-CurrentField._x)+(t._y-CurrentField._y)*(t._y-CurrentField._y)));
             }
         }
 

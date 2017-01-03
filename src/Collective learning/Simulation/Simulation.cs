@@ -29,7 +29,7 @@ namespace Collective_learning.Simulation
 
             SimulationStatistics.AllFieldsCount = _map.Fields.Length;
             SimulationStatistics.FoodCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Food) * SimulationOptions.ResourceCount;
-            SimulationStatistics.AllFoodCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Water) * SimulationOptions.ResourceCount;
+            SimulationStatistics.AllFoodCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Food) * SimulationOptions.ResourceCount;
             SimulationStatistics.AllWaterCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Water) * SimulationOptions.ResourceCount;
             SimulationStatistics.AllThreads = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Danger);
             SimulationStatistics.PopulationCount = _agents.Count;
@@ -144,7 +144,7 @@ namespace Collective_learning.Simulation
                         agent.TargetField.SpecialColor = Color.Yellow;
                     foreach (var knownField in agent.Knowledge.KnownFields)
                     {
-                        _map.Fields[knownField.Key.X, knownField.Key.Y].Darker = true;
+                        _map.Fields[knownField.Key._x, knownField.Key._y].Darker = true;
                     }
 
                     SimulationStatistics.DangerCount += agent.Statistics.DangerCount;

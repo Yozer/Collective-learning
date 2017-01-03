@@ -10,7 +10,7 @@ namespace Collective_learning.Simulation
     {
         private static readonly Font MyFont = new Font(new Font(Path.Combine("Assets", "Arial.ttf")));
 
-        internal int _x, _y;
+        public int _x, _y;
         private FieldType _type;
 
         private readonly RectangleShape _rectangle;
@@ -119,7 +119,7 @@ namespace Collective_learning.Simulation
 
         public bool Equals(MapField other)
         {
-            return X == other.X && Y == other.Y;
+            return _x == other._x && _y == other._y;
         }
 
         public override bool Equals(object obj)

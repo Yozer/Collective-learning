@@ -102,8 +102,6 @@ namespace Collective_learning.Simulation
                 ++agent.Statistics.FoodCount;
             else if (Type == FieldType.Water)
                 ++agent.Statistics.WaterCount;
-            else if (Type == FieldType.Danger)
-                ++agent.Statistics.DangerCount;
 
             if (_resourceCount == 0)
                 Type = FieldType.Empty;

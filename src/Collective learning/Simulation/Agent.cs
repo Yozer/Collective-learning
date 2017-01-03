@@ -42,7 +42,7 @@ namespace Collective_learning.Simulation
         public IKnowledge Knowledge { get; }
         public Vector2f Position => _circleShape.Position;
         public CircleShape Bounds => _circleShape;
-        public SimulationStatistics Statistics { get; } = new SimulationStatistics();
+        public SimulationStatistics Statistics { get; }
         public int Id { get; }
         public DateTime? CollidedAt { get; set; }
 
@@ -56,7 +56,7 @@ namespace Collective_learning.Simulation
             }
         }
 
-        public Agent(Map map, Knowledge globalKnowledge)
+        public Agent(Map map, Knowledge globalKnowledge, SimulationStatistics statistics)
         {
             _map = map;
             CurrentField = map.StartField;
@@ -67,6 +67,7 @@ namespace Collective_learning.Simulation
             _circleShape.OutlineColor = Color.Black;
 
             Knowledge = globalKnowledge ?? new Knowledge(map.Fields.Length);
+            Statistics = statistics ?? new SimulationStatistics();
             Knowledge.KnownFields[map.StartField] = DateTime.Now;
             Id = _internalId++;
 

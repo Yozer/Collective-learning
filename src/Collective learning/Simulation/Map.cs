@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
-using SFML.System;
 
 namespace Collective_learning.Simulation
 {
@@ -174,7 +172,7 @@ namespace Collective_learning.Simulation
             return (float)Math.Sqrt((a._x - b._x) * (a._x - b._x) + (a._y - b._y) * (a._y - b._y));
         }
 
-        private static int[][] array =
+        private static readonly int[][] array =
         {
             new [] {-1, -1},
             new [] {-1, 0},
@@ -187,22 +185,13 @@ namespace Collective_learning.Simulation
         };
         private IEnumerable<MapField> GetNeighbors(MapField field, IKnowledge knowledge)
         {
-            bool isKnownField = knowledge.KnownFields.ContainsKey(field);
             for (int i = 0; i < array.Length; ++i)
             {
                 if (field._x + array[i][0] >= 0 && field._x + array[i][0] < Width && field._y + array[i][1] >= 0 && field._y + array[i][1] < Height)
                 {
                     var neighbor = Fields[field._x + array[i][0], field._y + array[i][1]];
-                    if (!isKnownField)
-                    {
-                        if (knowledge.KnownFields.ContainsKey(neighbor) && neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked)
-                            yield return neighbor;
-                    }
-                    else
-                    {
-                        if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
-                            yield return neighbor;
-                    }
+                    if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
+                        yield return neighbor;
                 }
             }
             //var list = new List<Vector2i>(8)

@@ -28,7 +28,7 @@ namespace Collective_learning.Simulation
             InitAgents();
 
             SimulationStatistics.AllFieldsCount = _map.Fields.Length;
-            SimulationStatistics.FoodCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Food) * SimulationOptions.ResourceCount;
+            SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = SimulationStatistics.DangerCount = 0;
             SimulationStatistics.AllFoodCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Food) * SimulationOptions.ResourceCount;
             SimulationStatistics.AllWaterCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Water) * SimulationOptions.ResourceCount;
             SimulationStatistics.AllThreads = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Danger);
@@ -38,9 +38,10 @@ namespace Collective_learning.Simulation
         private void InitAgents()
         {
             var globalKnowledge = SimulationOptions.KnowledgeSharingType == SharingType.Global ? new Knowledge(_map.Fields.Length) : null;
+            var statistics = SimulationOptions.SimulationType == SimulationType.Fast ? SimulationStatistics : null;
             for (int i = 0; i < _options.AgentsCount; ++i)
             {
-                IAgent agent = new Agent(_map, globalKnowledge);
+                IAgent agent = new Agent(_map, globalKnowledge, statistics);
                 _agents.Add(agent);
             }
         }
@@ -128,32 +129,35 @@ namespace Collective_learning.Simulation
 
         private void CalculateStatistics()
         {
-            foreach (var mapField in _map.Fields)
+            if (SimulationOptions.SimulationType == SimulationType.Pretty)
             {
-                mapField.Darker = false;
-                mapField.SpecialColor = default(Color);
-            }
+                SimulationStatistics.DangerCount = SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = 0;
 
-            SimulationStatistics.DangerCount = SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = 0;
-
-            foreach (var agent in _agents)
-            {
-                if (_selectedAgent == null || agent.Equals(_selectedAgent))
+                foreach (var mapField in _map.Fields)
                 {
-                    if (agent.TargetField != null)
-                        agent.TargetField.SpecialColor = Color.Yellow;
-                    foreach (var knownField in agent.Knowledge.KnownFields)
-                    {
-                        _map.Fields[knownField.Key._x, knownField.Key._y].Darker = true;
-                    }
-
-                    SimulationStatistics.DangerCount += agent.Statistics.DangerCount;
-                    SimulationStatistics.FoodCount += agent.Statistics.FoodCount;
-                    SimulationStatistics.WaterCount += agent.Statistics.WaterCount;
+                    mapField.Darker = false;
+                    mapField.SpecialColor = default(Color);
                 }
-            }
 
-            SimulationStatistics.DiscoveredCount = _map.Fields.Cast<MapField>().Count(t => t.Darker);
+                foreach (var agent in _agents)
+                {
+                    if (_selectedAgent == null || agent.Equals(_selectedAgent))
+                    {
+                        if (agent.TargetField != null)
+                            agent.TargetField.SpecialColor = Color.Yellow;
+                        foreach (var knownField in agent.Knowledge.KnownFields)
+                        {
+                            _map.Fields[knownField.Key._x, knownField.Key._y].Darker = true;
+                        }
+
+                        SimulationStatistics.DangerCount += agent.Statistics.DangerCount;
+                        SimulationStatistics.FoodCount += agent.Statistics.FoodCount;
+                        SimulationStatistics.WaterCount += agent.Statistics.WaterCount;
+                    }
+                }
+
+                SimulationStatistics.DiscoveredCount = _map.Fields.Cast<MapField>().Count(t => t.Darker);
+            }
         }
 
         struct CollisionResult

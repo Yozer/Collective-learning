@@ -20,7 +20,8 @@ namespace Collective_learning.Simulation
         public static int ShareRandomKnowledgeMin = 2;
         public static int ShareRandomKnowledgeMax = 5;
 
-        public static SharingType KnowledgeSharingType = SharingType.Global;
+        public static readonly SharingType KnowledgeSharingType = SharingType.Global;
+        public static readonly SimulationType SimulationType = SimulationType.Fast;
 
 
         public const float AgentRadius = 4;
@@ -54,6 +55,12 @@ namespace Collective_learning.Simulation
         private static float _agentSpeed = 3*FieldWidth*1.5f;
 
         public static Random Random { get; } = new Random();
+    }
+
+    internal enum SimulationType
+    {
+        Fast,
+        Pretty
     }
 
     internal enum SharingType

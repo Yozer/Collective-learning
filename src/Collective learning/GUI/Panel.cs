@@ -53,7 +53,7 @@ namespace Collective_learning.GUI
                                               $"Woda: {SimulationStatistics.WaterCount}/{SimulationStatistics.AllWaterCount}\n" +
                                               $"Zagrożenia: {SimulationStatistics.DangerCount}. Wszystkie: {SimulationStatistics.AllThreads}\n" +
                                               $"Czas symulacji: {SimulationStatistics.SimulationTime:mm\\:ss\\:fff}\n" +
-                                              $"Liczba odkrytych pól: {SimulationStatistics.DiscoveredCount}/{SimulationStatistics.AllFieldsCount}\n" +
+                                              $"Liczba pól: {SimulationStatistics.AllFieldsCount}\n" +
                                               $"Liczebność populacji: {SimulationStatistics.PopulationCount}\n";
         }
 

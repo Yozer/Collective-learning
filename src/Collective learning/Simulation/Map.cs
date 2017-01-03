@@ -114,8 +114,10 @@ namespace Collective_learning.Simulation
                 f_score.Remove(x);
                 closedset.Add(x);
 
-                foreach (var y in GetNeighbors(x, knowledge))
+                GetNeighbors(x, knowledge);
+                for(int i = 0; i < Size; ++i)
                 {
+                    MapField y = Array[i];
                     if (closedset.Contains(y))
                         continue;
 
@@ -124,7 +126,6 @@ namespace Collective_learning.Simulation
                     if (!openset.Contains(y))
                     {
                         openset.Add(y);
-                        f_score.Add(y);
                     }
                     else if (tentative_g_score >= y.gScore)
                         continue;
@@ -172,28 +173,79 @@ namespace Collective_learning.Simulation
             return (float)Math.Sqrt((a._x - b._x) * (a._x - b._x) + (a._y - b._y) * (a._y - b._y));
         }
 
-        private static readonly int[][] array =
+        private static readonly MapField[] Array = new MapField[8];
+
+        private static int Size = 0;
+        private void GetNeighbors(MapField field, IKnowledge knowledge)
         {
-            new [] {-1, -1},
-            new [] {-1, 0},
-            new [] {-1, 1},
-            new [] {0, -1},
-            new [] {0, 1},
-            new [] {1, -1},
-            new [] {1, 0},
-            new [] {1, 1},
-        };
-        private IEnumerable<MapField> GetNeighbors(MapField field, IKnowledge knowledge)
-        {
-            for (int i = 0; i < array.Length; ++i)
+            MapField neighbor = null;
+            Size = 0;
+            bool subX = field._x - 1 >= 0;
+            bool subY = field._y - 1 >= 0;
+            bool upY = field._y + 1 < Height;
+            bool upX = field._x + 1 < Width;
+
+            
+
+            if (subX)
             {
-                if (field._x + array[i][0] >= 0 && field._x + array[i][0] < Width && field._y + array[i][1] >= 0 && field._y + array[i][1] < Height)
+                if (subY)
                 {
-                    var neighbor = Fields[field._x + array[i][0], field._y + array[i][1]];
+                    neighbor = Fields[field._x - 1, field._y - 1];
                     if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
-                        yield return neighbor;
+                        Array[Size++] = neighbor;
+                }
+
+                neighbor = Fields[field._x - 1, field._y];
+                if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
+                    Array[Size++] = neighbor;
+
+                if (upY)
+                {
+                    neighbor = Fields[field._x - 1, field._y + 1];
+                    if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
+                        Array[Size++] = neighbor;
                 }
             }
+
+            
+
+            if (upY)
+            {
+                neighbor = Fields[field._x, field._y + 1];
+                if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
+                    Array[Size++] = neighbor;
+            }
+            if (subY)
+            {
+                neighbor = Fields[field._x, field._y - 1];
+                if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
+                    Array[Size++] = neighbor;
+            }
+            
+
+            if (upX)
+            {
+                if (subY)
+                {
+                    neighbor = Fields[field._x + 1, field._y - 1];
+                    if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
+                        Array[Size++] = neighbor;
+                }
+
+                neighbor = Fields[field._x + 1, field._y];
+                if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
+                    Array[Size++] = neighbor;
+
+                if (upY)
+                {
+                    neighbor = Fields[field._x + 1, field._y + 1];
+                    if (!knowledge.KnownFields.ContainsKey(neighbor) || (neighbor.Type != FieldType.Danger && neighbor.Type != FieldType.Blocked))
+                        Array[Size++] = neighbor;
+                }
+            }
+
+            
             //var list = new List<Vector2i>(8)
             //{
             //    new Vector2i(field.X - 1, field.Y),

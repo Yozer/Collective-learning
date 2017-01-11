@@ -156,6 +156,11 @@ namespace Collective_learning.Simulation
                     }
                 }
             }
+
+            if (SimulationStatistics.WaterCount == SimulationStatistics.AllWaterCount && SimulationStatistics.FoodCount == SimulationStatistics.AllFoodCount)
+            {
+                Paused = true;
+            }
         }
 
         struct CollisionResult

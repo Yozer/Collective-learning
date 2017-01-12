@@ -6,14 +6,9 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 100;
+        public int AgentsCount { get; } = 500;
 
-        public const float AgentSpeed = 3 * 1.5f * 32;
-        //{
-        //    get { return _agentSpeed; }
-        //    set { _agentSpeed = value*1.5f*FieldWidth; }
-        //}
-
+        public const float AgentSpeed = 1f;
 
         public static int SimulationSpeed = 0;
         public static float ExplorationThreshold = 0.2f;
@@ -25,9 +20,7 @@ namespace Collective_learning.Simulation
         public static int ShareRandomKnowledgeMin = 2;
         public static int ShareRandomKnowledgeMax = 5;
 
-        public static readonly SharingType KnowledgeSharingType = SharingType.AllBetweenTwo;
-        public static readonly SimulationType SimulationType = SimulationType.Fast;
-
+        public static readonly SharingType KnowledgeSharingType = SharingType.Global;
 
         public const float AgentRadius = 4;
         public static readonly Color AgentColor = new Color(99, 60, 5); // brown
@@ -57,15 +50,7 @@ namespace Collective_learning.Simulation
             [FieldType.Empty] = Color.White
         };
 
-        private static float _agentSpeed = 3*FieldWidth*1.5f;
-
         public static Random Random { get; } = new Random();
-    }
-
-    internal enum SimulationType
-    {
-        Fast,
-        Pretty
     }
 
     internal enum SharingType

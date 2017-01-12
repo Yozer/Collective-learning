@@ -12,6 +12,6 @@ namespace Collective_learning.Simulation
         public int AllFieldsCount { get; set; }
         public int AllFoodCount { get; set; }
         public int AllWaterCount { get; set; }
-        public int AllThreads { get; set; }
+        public int AllThreats { get; set; }
     }
 }

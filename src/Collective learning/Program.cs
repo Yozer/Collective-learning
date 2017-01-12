@@ -8,6 +8,7 @@ namespace Collective_learning
 {
     public class Program
     {
+        public static bool DrawWindow = false;
         public static void Main(string[] args)
         {
             ISimulation simulation = SimulationFactory.CreateDefault();
@@ -30,9 +31,13 @@ namespace Collective_learning
 
                 window.DispatchEvents();
                 window.Update(time);
-                window.Clear(Color.White);
-                window.Draw();
-                window.Display();
+
+                if (DrawWindow)
+                {
+                    window.Clear(Color.White);
+                    window.Draw();
+                    window.Display();
+                }
 
                 ++frames;
             }

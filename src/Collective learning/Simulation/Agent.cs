@@ -175,7 +175,7 @@ namespace Collective_learning.Simulation
 
             if (NextField != null)
             {
-                _circleShape.Position += _movementDirection*SimulationOptions.AgentSpeed*delta;
+                _circleShape.Position += _movementDirection*SimulationOptions.AgentSpeed;
                 var diff = _circleShape.Position - NextField.Center;
 
                 if (diff.X*_movementDirection.X + diff.Y*_movementDirection.Y > 0)
@@ -271,13 +271,27 @@ namespace Collective_learning.Simulation
                 // don't know that or he's knowledge is outdated
                 if (!shareTo.Knowledge.KnownFields.ContainsKey(pair.Key) || shareTo.Knowledge.KnownFields[pair.Key] < pair.Value)
                 {
+                    if (shareTo.Knowledge.KnownFields.ContainsKey(pair.Key))
+                    {
+                        shareTo.Knowledge.Positive.Remove(pair.Key);
+                        shareTo.Knowledge.Negative.Remove(pair.Key);
+                        shareTo.Knowledge.Blocked.Remove(pair.Key);
+                    }
+
                     shareTo.Knowledge.KnownFields[pair.Key] = pair.Value;
-                    if (Knowledge.Positive.ContainsKey(pair.Key))
-                        shareTo.Knowledge.Positive[pair.Key] = Knowledge.Positive[pair.Key];
-                    else if (Knowledge.Blocked.ContainsKey(pair.Key))
-                        shareTo.Knowledge.Blocked[pair.Key] = Knowledge.Blocked[pair.Key];
-                    else if (Knowledge.Negative.ContainsKey(pair.Key))
-                        shareTo.Knowledge.Negative[pair.Key] = Knowledge.Negative[pair.Key];
+
+                    if (pair.Key.Type == FieldType.Food || pair.Key.Type == FieldType.Water)
+                        shareTo.Knowledge.Positive[pair.Key] = pair.Value;
+                    else if (pair.Key.Type == FieldType.Danger)
+                        shareTo.Knowledge.Negative[pair.Key] = pair.Value;
+                    else if (pair.Key.Type == FieldType.Blocked)
+                        shareTo.Knowledge.Blocked[pair.Key] = pair.Value;
+                    //if (Knowledge.Positive.ContainsKey(pair.Key))
+                    //    shareTo.Knowledge.Positive[pair.Key] = Knowledge.Positive[pair.Key];
+                    //else if (Knowledge.Blocked.ContainsKey(pair.Key))
+                    //    shareTo.Knowledge.Blocked[pair.Key] = Knowledge.Blocked[pair.Key];
+                    //else if (Knowledge.Negative.ContainsKey(pair.Key))
+                    //    shareTo.Knowledge.Negative[pair.Key] = Knowledge.Negative[pair.Key];
                 }
             }
         }

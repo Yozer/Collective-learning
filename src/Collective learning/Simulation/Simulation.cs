@@ -18,7 +18,7 @@ namespace Collective_learning.Simulation
         public float Width => _map.Width*SimulationOptions.FieldWidth;
         public float Height => _map.Height*SimulationOptions.FieldHeight;
         public SimulationStatistics SimulationStatistics { get; set; } = new SimulationStatistics();
-        public bool Paused { get; set; } = true;
+        public bool Paused { get; set; } = false;
 
         public Simulation(Map map, SimulationOptions options)
         {
@@ -31,14 +31,15 @@ namespace Collective_learning.Simulation
             SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = SimulationStatistics.DangerCount = SimulationStatistics.SimulationStep = 0;
             SimulationStatistics.AllFoodCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Food) * SimulationOptions.ResourceCount;
             SimulationStatistics.AllWaterCount = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Water) * SimulationOptions.ResourceCount;
-            SimulationStatistics.AllThreads = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Danger);
+            SimulationStatistics.AllThreats = _map.Fields.Cast<MapField>().Count(t => t.Type == FieldType.Danger);
             SimulationStatistics.PopulationCount = _agents.Count;
         }
 
         private void InitAgents()
         {
             var globalKnowledge = SimulationOptions.KnowledgeSharingType == SharingType.Global ? new Knowledge(_map.Fields.Length) : null;
-            var statistics = SimulationOptions.SimulationType == SimulationType.Fast ? SimulationStatistics : null;
+            //var statistics = SimulationOptions.SimulationType == SimulationType.Fast ? SimulationStatistics : null;
+            var statistics = SimulationStatistics;
             for (int i = 0; i < _options.AgentsCount; ++i)
             {
                 IAgent agent = new Agent(_map, globalKnowledge, statistics);
@@ -129,9 +130,9 @@ namespace Collective_learning.Simulation
 
         private void CalculateStatistics()
         {
-            if (SimulationOptions.SimulationType == SimulationType.Pretty)
+            if (Program.DrawWindow)
             {
-                SimulationStatistics.DangerCount = SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = 0;
+                //SimulationStatistics.DangerCount = SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = 0;
 
                 foreach (var mapField in _map.Fields)
                 {
@@ -150,9 +151,9 @@ namespace Collective_learning.Simulation
                             _map.Fields[knownField.Key._x, knownField.Key._y].Darker = true;
                         }
 
-                        SimulationStatistics.DangerCount += agent.Statistics.DangerCount;
-                        SimulationStatistics.FoodCount += agent.Statistics.FoodCount;
-                        SimulationStatistics.WaterCount += agent.Statistics.WaterCount;
+                        //SimulationStatistics.DangerCount += agent.Statistics.DangerCount;
+                        //SimulationStatistics.FoodCount += agent.Statistics.FoodCount;
+                        //SimulationStatistics.WaterCount += agent.Statistics.WaterCount;
                     }
                 }
             }

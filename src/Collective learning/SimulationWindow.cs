@@ -15,13 +15,13 @@ namespace Collective_learning
         private readonly ISimulation _simulation;
         private readonly View _simulationView;
         private readonly Panel _panel;
+        private readonly Stopwatch _stopwatch = new Stopwatch();
 
         private const string WindowTitle = "Collective Learning 0.1";
         private const uint WindowWidth = 1920u;
         private const uint WindowHeight = 1080u;
 
         private Vector2i _lastDragPoint;
-        private bool _draw = SimulationOptions.SimulationType == SimulationType.Pretty;
         private float _accumulator = 0f;
 
         public Text FPS { get; }
@@ -60,6 +60,7 @@ namespace Collective_learning
             FPS = new Text("0", ButtonSettings.DefaultFont, 15);
             FPS.Position = new Vector2f(5, 5);
             FPS.Color = Color.Yellow;
+            _stopwatch.Start();
         }
 
         private void InitGui()
@@ -94,9 +95,15 @@ namespace Collective_learning
             _panel.AddBox(box);
         }
 
-        private void UpdateStatistics()
+        private void UpdateStatistics(float delta)
         {
             _panel.SimulationStatistics = _simulation.SimulationStatistics;
+            Console.Clear();
+            Console.WriteLine($"Step:        {_simulation.SimulationStatistics.SimulationStep,6}");
+            Console.WriteLine($"Food:        {_simulation.SimulationStatistics.FoodCount,4}/{_simulation.SimulationStatistics.AllFoodCount,4}");
+            Console.WriteLine($"Water:       {_simulation.SimulationStatistics.WaterCount,4}/{_simulation.SimulationStatistics.AllWaterCount,4}");
+            Console.WriteLine($"Danger:      {_simulation.SimulationStatistics.DangerCount,6}");
+            Console.WriteLine($"All dangers: {_simulation.SimulationStatistics.AllThreats,3}");
         }
 
         private void PausedClicked()
@@ -133,7 +140,7 @@ namespace Collective_learning
             if (args.Code == Keyboard.Key.Escape)
                 Close();
             else if (args.Code == Keyboard.Key.P)
-                _draw = !_draw;
+                Program.DrawWindow = !Program.DrawWindow;
         }
 
 
@@ -157,31 +164,36 @@ namespace Collective_learning
 
         internal void Update(float delta)
         {
-            var mousePoint = Mouse.GetPosition(this);
-            if (HasFocus())
+            if (Program.DrawWindow)
             {
-                if(_panel.GetGlobalBounds().Contains(mousePoint.X, mousePoint.Y))
-                    _panel.Dragging(mousePoint);
-                else
-                    HandleDragging(mousePoint);
+                var mousePoint = Mouse.GetPosition(this);
+                if (HasFocus())
+                {
+                    if (_panel.GetGlobalBounds().Contains(mousePoint.X, mousePoint.Y))
+                        _panel.Dragging(mousePoint);
+                    else
+                        HandleDragging(mousePoint);
+                }
             }
 
             if (_accumulator >= SimulationOptions.SimulationSpeed)
             {
                 _accumulator -= SimulationOptions.SimulationSpeed;
                 _simulation.Update(delta);
-                UpdateStatistics();
+            }
+
+            if (_stopwatch.ElapsedMilliseconds > 1000)
+            {
+                UpdateStatistics(delta);
+                _stopwatch.Restart();
             }
 
             _accumulator += delta * 1000;
         }
         internal void Draw()
         {
-            if (_draw)
-            {
-                SetView(_simulationView);
-                Draw(_simulation);
-            }
+            SetView(_simulationView);
+            Draw(_simulation);
             SetView(DefaultView);
             Draw(_panel);
             Draw(FPS);

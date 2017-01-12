@@ -18,7 +18,7 @@ namespace Collective_learning.Simulation
 
 
         public static int ShareRandomKnowledgeMin = 2;
-        public static int ShareRandomKnowledgeMax = 5;
+        public static int ShareRandomKnowledgeMax = 1000;
 
         public static readonly SharingType KnowledgeSharingType = SharingType.Global;
 

@@ -30,7 +30,7 @@ namespace Collective_learning
         {
             var contextSettings = new ContextSettings
             {
-                AntialiasingLevel = 16
+                AntialiasingLevel = 0
             };
 
             return new SimulationWindow(simulation, contextSettings);

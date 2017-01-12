@@ -95,9 +95,15 @@ namespace Collective_learning.Simulation
                     CollidedAt = null;
             }
 
-            if (TargetField == null)
+            if (TargetField == null || Knowledge.Negative.ContainsKey(TargetField))
             {
+                NextField = TargetField = null;
                 ChooseTarget();
+                InvalidatePathToTarget();
+            }
+            if ((NextField != null && Knowledge.Negative.ContainsKey(NextField)) || Path.Any(t => Knowledge.Negative.ContainsKey(t)))
+            {
+                NextField = null;
                 InvalidatePathToTarget();
             }
             Move(delta);

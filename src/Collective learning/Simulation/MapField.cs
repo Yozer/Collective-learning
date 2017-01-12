@@ -9,7 +9,6 @@ namespace Collective_learning.Simulation
     public class MapField : Drawable, IDisposable, IEquatable<MapField>
     {
         private static readonly Font MyFont = new Font(new Font(Path.Combine("Assets", "Arial.ttf")));
-
         public int _x, _y;
         private FieldType _type;
 

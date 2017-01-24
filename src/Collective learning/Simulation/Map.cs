@@ -244,37 +244,6 @@ namespace Collective_learning.Simulation
                         Array[Size++] = neighbor;
                 }
             }
-
-            
-            //var list = new List<Vector2i>(8)
-            //{
-            //    new Vector2i(field.X - 1, field.Y),
-            //    new Vector2i(field.X, field.Y - 1),
-            //    new Vector2i(field.X, field.Y + 1),
-            //    new Vector2i(field.X + 1, field.Y),
-            //};
-            //var list = new List<Vector2i>(8)
-            //{
-            //    new Vector2i(field.X - 1, field.Y - 1),
-            //    new Vector2i(field.X - 1, field.Y),
-            //    new Vector2i(field.X - 1, field.Y + 1),
-            //    new Vector2i(field.X, field.Y - 1),
-            //    new Vector2i(field.X, field.Y + 1),
-            //    new Vector2i(field.X + 1, field.Y - 1),
-            //    new Vector2i(field.X + 1, field.Y),
-            //    new Vector2i(field.X + 1, field.Y + 1),
-            //};
-
-            //var result = list
-            //    .Where(t => t.X >= 0 && t.X < Width && t.Y >= 0 && t.Y < Height)
-            //    .Select(t => Fields[t.X, t.Y]);
-
-            //if (!knowledge.KnownFields.ContainsKey(field))
-            //    result = result.Where(t => knowledge.KnownFields.ContainsKey(t) && t.Type != FieldType.Danger && t.Type != FieldType.Blocked); // from unknown we can only go to known
-            //else
-            //    result = result.Where(t => !knowledge.KnownFields.ContainsKey(t) || (t.Type != FieldType.Danger && t.Type != FieldType.Blocked)); // from known we can go anywhere but not negative
-
-            //return result.ToList();
         }
     }
 

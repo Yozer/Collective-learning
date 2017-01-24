@@ -131,10 +131,6 @@ namespace Collective_learning.Simulation
 
         public override int GetHashCode()
         {
-            //int result = 373; // Constant can vary, but should be prime
-            //result = 37 * result + _x;
-            //result = 37 * result + _y;
-            //return result;
             return (_x << 16) | _y;
         }
 

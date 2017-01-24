@@ -135,8 +135,6 @@ namespace Collective_learning.Simulation
         {
             if (Program.DrawWindow)
             {
-                //SimulationStatistics.DangerCount = SimulationStatistics.FoodCount = SimulationStatistics.WaterCount = 0;
-
                 foreach (var mapField in _map.Fields)
                 {
                     mapField.Darker = false;
@@ -153,10 +151,6 @@ namespace Collective_learning.Simulation
                         {
                             _map.Fields[knownField.Key._x, knownField.Key._y].Darker = true;
                         }
-
-                        //SimulationStatistics.DangerCount += agent.Statistics.DangerCount;
-                        //SimulationStatistics.FoodCount += agent.Statistics.FoodCount;
-                        //SimulationStatistics.WaterCount += agent.Statistics.WaterCount;
                     }
                 }
             }

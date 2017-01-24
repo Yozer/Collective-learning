@@ -11,19 +11,17 @@ namespace Collective_learning.Simulation
     class Simulation : ISimulation
     {
         private readonly Map _map;
-        private readonly SimulationOptions _options;
         private readonly List<IAgent> _agents = new List<IAgent>();
         private IAgent _selectedAgent = null;
 
         public float Width => _map.Width*SimulationOptions.FieldWidth;
         public float Height => _map.Height*SimulationOptions.FieldHeight;
         public SimulationStatistics SimulationStatistics { get; set; } = new SimulationStatistics();
-        public bool Paused { get; set; } = false;
+        public bool Paused { get; set; } = true;
 
-        public Simulation(Map map, SimulationOptions options)
+        public Simulation(Map map)
         {
             _map = map;
-            _options = options;
 
             InitAgents();
 
@@ -43,7 +41,7 @@ namespace Collective_learning.Simulation
             } : null;
 
             var statistics = SimulationStatistics;
-            for (int i = 0; i < _options.AgentsCount; ++i)
+            for (int i = 0; i < SimulationOptions.AgentsCount; ++i)
             {
                 IAgent agent = new Agent(_map, globalKnowledge, statistics);
                 _agents.Add(agent);

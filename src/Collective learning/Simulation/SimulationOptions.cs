@@ -6,21 +6,17 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 250;
-
-        public const float AgentSpeed = 3f;
-
-        public static int SimulationSpeed = 0;
+        public static int AgentsCount = 250;
         public static float ExplorationThreshold = 0.0f;
         public static int SharingKnowledgePenalty = 10000;
         public static int NoSharingPeriodAfterSharingKnowledge = 500;
         public static float ChanceToShareKnowledge = 1f;
+        public static SharingType KnowledgeSharingType = SharingType.AllBetweenTwo;
 
-
+        public const float AgentSpeed = 3f;
+        public static int SimulationSpeed = 0;
         public static int ShareRandomKnowledgeMin = 100;
         public static int ShareRandomKnowledgeMax = 700;
-
-        public static SharingType KnowledgeSharingType = SharingType.AllBetweenTwo;
 
         public const float AgentRadius = 4;
         public static readonly Color AgentColor = new Color(99, 60, 5); // brown

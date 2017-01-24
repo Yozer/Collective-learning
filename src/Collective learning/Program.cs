@@ -10,19 +10,10 @@ namespace Collective_learning
 {
     public class Program
     {
-        public static bool DrawWindow = false;
+        public static bool DrawWindow = true;
         public static void Main(string[] args)
         {
-            if (args.Length == 2)
-            {
-                SimulationOptions.KnowledgeSharingType = (SharingType) Enum.Parse(typeof(SharingType), args[0], true);
-                SimulationOptions.OutputFile = args[1];
-            }
-            else
-            {
-                SimulationOptions.OutputFile = "data.txt";
-            }
-
+            SimulationOptions.OutputFile = args.Length == 1 ? args[1] : "data.txt";
             ISimulation simulation = SimulationFactory.CreateDefault();
             var window = SimulationWindow.Create(simulation);
 

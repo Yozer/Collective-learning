@@ -6,21 +6,21 @@ namespace Collective_learning.Simulation
 {
     internal class SimulationOptions
     {
-        public int AgentsCount { get; } = 500;
+        public int AgentsCount { get; } = 250;
 
-        public const float AgentSpeed = 1f;
+        public const float AgentSpeed = 3f;
 
         public static int SimulationSpeed = 0;
-        public static float ExplorationThreshold = 0.2f;
-        public static int SharingKnowledgePenalty = 300;
-        public static int NoSharingPeriodAfterSharingKnowledge = 1000;
-        public static float ChanceToShareKnowledge = 0.7f;
+        public static float ExplorationThreshold = 0.0f;
+        public static int SharingKnowledgePenalty = 10000;
+        public static int NoSharingPeriodAfterSharingKnowledge = 500;
+        public static float ChanceToShareKnowledge = 1f;
 
 
-        public static int ShareRandomKnowledgeMin = 2;
-        public static int ShareRandomKnowledgeMax = 1000;
+        public static int ShareRandomKnowledgeMin = 100;
+        public static int ShareRandomKnowledgeMax = 700;
 
-        public static readonly SharingType KnowledgeSharingType = SharingType.Global;
+        public static SharingType KnowledgeSharingType = SharingType.AllBetweenTwo;
 
         public const float AgentRadius = 4;
         public static readonly Color AgentColor = new Color(99, 60, 5); // brown
@@ -51,6 +51,7 @@ namespace Collective_learning.Simulation
         };
 
         public static Random Random { get; } = new Random();
+        public static string OutputFile { get; set; }
     }
 
     internal enum SharingType

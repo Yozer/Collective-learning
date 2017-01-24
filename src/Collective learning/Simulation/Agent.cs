@@ -30,6 +30,8 @@ namespace Collective_learning.Simulation
                 {
                     _movementDirection = _nextField.Center - Position;
                     _movementDirection /= (float) Math.Sqrt(_movementDirection.X*_movementDirection.X + _movementDirection.Y * _movementDirection.Y);
+                    if((Math.Abs(_movementDirection.X) < 0.001 && Math.Abs(_movementDirection.Y) < 0.001) || (float.IsNaN(_movementDirection.X) || float.IsNaN(_movementDirection.Y)))
+                        throw new InvalidOperationException("Movement vector is invalid");
                 }
                 else
                 {
@@ -67,7 +69,10 @@ namespace Collective_learning.Simulation
             _circleShape.OutlineThickness = 1.0f;
             _circleShape.OutlineColor = Color.Black;
 
-            Knowledge = globalKnowledge ?? new Knowledge(map.Fields.Length);
+            Knowledge = globalKnowledge ?? new Knowledge(map.Fields.Length)
+            {
+                UnknownFields = new HashSet<MapField>(map.Fields.Cast<MapField>().Where(t => t != CurrentField))
+            };
             Statistics = statistics ?? new SimulationStatistics();
             Knowledge.KnownFields[map.StartField] = DateTime.Now;
             Id = _internalId++;
@@ -91,19 +96,24 @@ namespace Collective_learning.Simulation
             {
                 if(CollidedAt.Value + SimulationOptions.SharingKnowledgePenalty > SimulationStep)
                     return;
-                else if (CollidedAt.Value + SimulationOptions.NoSharingPeriodAfterSharingKnowledge < SimulationStep)
+                else if (CollidedAt.Value + SimulationOptions.SharingKnowledgePenalty + SimulationOptions.NoSharingPeriodAfterSharingKnowledge < SimulationStep)
                     CollidedAt = null;
             }
-
-            if (TargetField == null || Knowledge.Negative.ContainsKey(TargetField))
+            if (TargetField == null || Knowledge.Negative.ContainsKey(TargetField) || Knowledge.Blocked.ContainsKey(TargetField))
             {
                 NextField = TargetField = null;
                 ChooseTarget();
                 InvalidatePathToTarget();
             }
-            if ((NextField != null && Knowledge.Negative.ContainsKey(NextField)) || Path.Any(t => Knowledge.Negative.ContainsKey(t)))
+            if ((NextField != null && (Knowledge.Negative.ContainsKey(NextField) || Knowledge.Blocked.ContainsKey(NextField))))
             {
                 NextField = null;
+                InvalidatePathToTarget();
+            }
+            if (TargetField != null && (Knowledge.UnknownFields.Count > 0 || Knowledge.Positive.Count > 0) && TargetField.Type == FieldType.Empty && Knowledge.KnownFields.ContainsKey(TargetField))
+            {
+                NextField = TargetField = null;
+                ChooseTarget();
                 InvalidatePathToTarget();
             }
             Move(delta);
@@ -113,7 +123,8 @@ namespace Collective_learning.Simulation
         {
             // if we don't know any positive fields or we want to explore
             MapField fieldToExplore;
-            if ((Knowledge.Positive.Keys.All(t => t == CurrentField) || SimulationOptions.Random.NextDouble() <= SimulationOptions.ExplorationThreshold)
+            bool anyPositiveIsKnown = Knowledge.Positive.Count > 1 || (Knowledge.Positive.Count == 1 && Knowledge.Positive.Keys.All(t => t != CurrentField));
+            if ((!anyPositiveIsKnown || SimulationOptions.Random.NextDouble() <= SimulationOptions.ExplorationThreshold)
                 && (fieldToExplore = ChooseUnknownField()) != null)
             {
                 TargetField = fieldToExplore;
@@ -139,8 +150,30 @@ namespace Collective_learning.Simulation
                 // we know entire neighborhood of this place and we still were unable to find a path thus we cannot reach that place.
                 Knowledge.KnownFields[TargetField] = DateTime.Now;
                 Knowledge.Blocked[TargetField] = DateTime.Now;
+                Knowledge.UnknownFields.Remove(TargetField);
                 ChooseTarget();
                 InvalidatePathToTarget();
+            }
+
+            var movementDirection = Path.Peek().Center - Position;
+            if (Math.Abs(movementDirection.X) < 0.001 && Math.Abs(movementDirection.Y) < 0.001)
+            {
+                var nextField = Path.Dequeue();
+                _circleShape.Position = nextField.Center;
+                CurrentField = nextField;
+                NextField = null;
+                UpdateKnowledge(CurrentField);
+
+                if (CurrentField == TargetField)
+                {
+                    OnTargetReached();
+                    if (TargetField == null)
+                    {
+                        NextField = TargetField = null;
+                        ChooseTarget();
+                        InvalidatePathToTarget();
+                    }
+                }
             }
         }
 
@@ -222,6 +255,7 @@ namespace Collective_learning.Simulation
                 Knowledge.Blocked.Remove(newField);
             }
             Knowledge.KnownFields[newField] = DateTime.Now;
+            Knowledge.UnknownFields.Remove(newField);
 
             if (newField.Type == FieldType.Food || newField.Type == FieldType.Water)
                 Knowledge.Positive[newField] = DateTime.Now;
@@ -236,11 +270,65 @@ namespace Collective_learning.Simulation
 
         private MapField ChooseUnknownField()
         {
-            var unknown = _map.Fields.Cast<MapField>().Where(t => !Knowledge.KnownFields.ContainsKey(t) && t != CurrentField).ToList();
-            if (unknown.Count == 0)
+            if (Knowledge.UnknownFields.Count == 0)
                 return null;
+            var unknown = Knowledge.UnknownFields.ToArray();
+            int index = SimulationOptions.Random.Next(0, Math.Min(8, unknown.Length));
+            return QuickSelect(unknown, index + 1);
+            //return unknown[SimulationOptions.Random.Next(0, unknown.Count)];
+        }
+        MapField QuickSelect(MapField[] arrayElements, int kthSmallest)
+        {
+            int startPos = 0;
+            int endPos = arrayElements.Length - 1;
 
-            return unknown[SimulationOptions.Random.Next(0, unknown.Count)];
+            while (endPos > startPos)
+            {
+                int pivotIndx = QuickSelectPartition(arrayElements, startPos, endPos);
+
+                if (pivotIndx == kthSmallest)
+                {
+                    break;
+                }
+
+                if (pivotIndx > kthSmallest)
+                {
+                    endPos = pivotIndx - 1;
+                }
+                else
+                {
+                    startPos = pivotIndx + 1;
+                }
+            }
+
+            return arrayElements[kthSmallest - 1];
+        }
+
+        int QuickSelectPartition(MapField[] listToSort, int leftIndxPtr, int rightIndxPtr)
+        {
+            int pivotIndx = (leftIndxPtr + rightIndxPtr) / 2;
+            MapField pivotValue = listToSort[pivotIndx];
+            float pivotDistance = Map.Distance(CurrentField, pivotValue);
+
+            Swap(listToSort, pivotIndx, rightIndxPtr);
+            for (int lpStIndx = leftIndxPtr; lpStIndx <= rightIndxPtr; lpStIndx++)
+            {
+                if (Map.Distance(CurrentField, listToSort[lpStIndx]) < pivotDistance)
+                {
+                    Swap(listToSort, lpStIndx, leftIndxPtr);
+                    leftIndxPtr++;
+                }
+            }
+
+            Swap(listToSort, leftIndxPtr, rightIndxPtr);
+            return leftIndxPtr;
+        }
+
+        private void Swap(MapField[] arr, int i, int j)
+        {
+            MapField temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
         }
 
         public bool Equals(IAgent other)
@@ -285,6 +373,7 @@ namespace Collective_learning.Simulation
                     }
 
                     shareTo.Knowledge.KnownFields[pair.Key] = pair.Value;
+                    shareTo.Knowledge.UnknownFields.Remove(pair.Key);
 
                     if (pair.Key.Type == FieldType.Food || pair.Key.Type == FieldType.Water)
                         shareTo.Knowledge.Positive[pair.Key] = pair.Value;
@@ -292,12 +381,6 @@ namespace Collective_learning.Simulation
                         shareTo.Knowledge.Negative[pair.Key] = pair.Value;
                     else if (pair.Key.Type == FieldType.Blocked)
                         shareTo.Knowledge.Blocked[pair.Key] = pair.Value;
-                    //if (Knowledge.Positive.ContainsKey(pair.Key))
-                    //    shareTo.Knowledge.Positive[pair.Key] = Knowledge.Positive[pair.Key];
-                    //else if (Knowledge.Blocked.ContainsKey(pair.Key))
-                    //    shareTo.Knowledge.Blocked[pair.Key] = Knowledge.Blocked[pair.Key];
-                    //else if (Knowledge.Negative.ContainsKey(pair.Key))
-                    //    shareTo.Knowledge.Negative[pair.Key] = Knowledge.Negative[pair.Key];
                 }
             }
         }

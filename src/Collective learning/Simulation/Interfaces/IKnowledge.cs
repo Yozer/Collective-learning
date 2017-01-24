@@ -9,5 +9,6 @@ namespace Collective_learning.Simulation.Interfaces
         Dictionary<MapField, DateTime> Negative { get; }
         Dictionary<MapField, DateTime> Blocked { get; }
         Dictionary<MapField, DateTime> KnownFields { get; }
+        HashSet<MapField> UnknownFields { get; }
     }
 }

@@ -49,7 +49,7 @@ namespace Collective_learning.Simulation
             }
         }
 
-        public Map(string path) : this(new StreamReader(new FileStream(path, FileMode.Open)), dispose: true)
+        public Map(string path) : this(new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)), dispose: true)
         {
         }
 
@@ -167,7 +167,7 @@ namespace Collective_learning.Simulation
             return new Queue<MapField>(result.Skip(1));
         }
 
-        private float Distance(MapField a, MapField b)
+        public static float Distance(MapField a, MapField b)
         {
             //return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
             return (float)Math.Sqrt((a._x - b._x) * (a._x - b._x) + (a._y - b._y) * (a._y - b._y));

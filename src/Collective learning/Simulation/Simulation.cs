@@ -37,8 +37,11 @@ namespace Collective_learning.Simulation
 
         private void InitAgents()
         {
-            var globalKnowledge = SimulationOptions.KnowledgeSharingType == SharingType.Global ? new Knowledge(_map.Fields.Length) : null;
-            //var statistics = SimulationOptions.SimulationType == SimulationType.Fast ? SimulationStatistics : null;
+            var globalKnowledge = SimulationOptions.KnowledgeSharingType == SharingType.Global ? new Knowledge(_map.Fields.Length)
+            {
+                UnknownFields = new HashSet<MapField>(_map.Fields.Cast<MapField>().Where(t => t != _map.StartField))
+            } : null;
+
             var statistics = SimulationStatistics;
             for (int i = 0; i < _options.AgentsCount; ++i)
             {

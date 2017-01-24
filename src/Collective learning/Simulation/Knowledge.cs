@@ -10,6 +10,7 @@ namespace Collective_learning.Simulation
         public Dictionary<MapField, DateTime> Negative { get; }
         public Dictionary<MapField, DateTime> Blocked { get; }
         public Dictionary<MapField, DateTime> KnownFields { get; }
+        public HashSet<MapField> UnknownFields { get; set; }
 
         public Knowledge(int size)
         {
@@ -19,5 +20,6 @@ namespace Collective_learning.Simulation
             Blocked = new Dictionary<MapField, DateTime>(size);
             KnownFields = new Dictionary<MapField, DateTime>(size);
         }
+
     }
 }

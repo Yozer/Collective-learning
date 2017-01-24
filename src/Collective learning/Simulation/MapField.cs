@@ -103,7 +103,10 @@ namespace Collective_learning.Simulation
                 ++agent.Statistics.WaterCount;
 
             if (_resourceCount == 0)
+            {
                 Type = FieldType.Empty;
+                agent.Knowledge.Positive.Remove(this);
+            }
 
             return true;
         }

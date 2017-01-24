@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
 using SFML.System;
@@ -16,6 +17,7 @@ namespace Collective_learning
         private readonly View _simulationView;
         private readonly Panel _panel;
         private readonly Stopwatch _stopwatch = new Stopwatch();
+        private StreamWriter _writer = new StreamWriter(new FileStream(SimulationOptions.OutputFile, FileMode.Create, FileAccess.Write));
 
         private const string WindowTitle = "Collective Learning 0.1";
         private const uint WindowWidth = 1920u;
@@ -61,6 +63,10 @@ namespace Collective_learning
             FPS.Position = new Vector2f(5, 5);
             FPS.Color = Color.Yellow;
             _stopwatch.Start();
+
+            _writer.WriteLine("step;food;water;danger");
+            UpdateStatistics(0f);
+
         }
 
         private void InitGui()
@@ -104,6 +110,8 @@ namespace Collective_learning
             Console.WriteLine($"Water:       {_simulation.SimulationStatistics.WaterCount,4}/{_simulation.SimulationStatistics.AllWaterCount,4}");
             Console.WriteLine($"Danger:      {_simulation.SimulationStatistics.DangerCount,6}");
             Console.WriteLine($"All dangers: {_simulation.SimulationStatistics.AllThreats,3}");
+
+            _writer?.WriteLine($"{_simulation.SimulationStatistics.SimulationStep};{_simulation.SimulationStatistics.FoodCount};{_simulation.SimulationStatistics.WaterCount};{_simulation.SimulationStatistics.DangerCount}");
         }
 
         private void PausedClicked()
@@ -176,13 +184,20 @@ namespace Collective_learning
                 }
             }
 
+            if (_simulation.Paused && _writer != null)
+            {
+                UpdateStatistics(delta);
+                _writer.Dispose();
+                _writer = null;
+            }
+
             if (_accumulator >= SimulationOptions.SimulationSpeed)
             {
                 _accumulator -= SimulationOptions.SimulationSpeed;
                 _simulation.Update(delta);
             }
 
-            if (_stopwatch.ElapsedMilliseconds > 1000)
+            if (_stopwatch.ElapsedMilliseconds > 50)
             {
                 UpdateStatistics(delta);
                 _stopwatch.Restart();

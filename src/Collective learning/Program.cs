@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using Collective_learning.Simulation;
 using Collective_learning.Simulation.Factory;
 using Collective_learning.Simulation.Interfaces;
 using SFML.Graphics;
@@ -11,6 +13,16 @@ namespace Collective_learning
         public static bool DrawWindow = false;
         public static void Main(string[] args)
         {
+            if (args.Length == 2)
+            {
+                SimulationOptions.KnowledgeSharingType = (SharingType) Enum.Parse(typeof(SharingType), args[0], true);
+                SimulationOptions.OutputFile = args[1];
+            }
+            else
+            {
+                SimulationOptions.OutputFile = "data.txt";
+            }
+
             ISimulation simulation = SimulationFactory.CreateDefault();
             var window = SimulationWindow.Create(simulation);
 
